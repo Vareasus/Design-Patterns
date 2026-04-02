@@ -1,5 +1,17 @@
-// Factory Method Design Pattern - Creational Category
+// Factory Method Design Pattern - Creational Category //
 // Source: salihcantekin/youtube_DesignPatterns_Builder
+
+PizzaStore ankaraPizzaStore = new AnkaraPizzaStore();
+PizzaStore istanbulPizzaStore = new IstanbulPizzaStore();
+
+IPizza cheesePizza = ankaraPizzaStore.OrderPizza("cheese");
+Console.WriteLine("Cheese pizza ordered in Ankara Store");
+
+IPizza veggiePizza = istanbulPizzaStore.OrderPizza("veggie");
+Console.WriteLine("Veggie pizza ordered in Istanbul Store");
+
+
+
 
 interface IPizza
 {
@@ -8,23 +20,41 @@ interface IPizza
     void Cut();
 }
 
-// === Concrete Products ===
-
 class CheesePizza : IPizza
 {
-    public void Prepare() => Console.WriteLine("Cheese Pizza Prepared");
-    public void Bake() => Console.WriteLine("Cheese Pizza Baked");
-    public void Cut() => Console.WriteLine("Cheese Pizza Cut");
+    public void Prepare()
+    {
+        Console.WriteLine("Cheese Pizza Prepared");
+    }
+
+    public void Bake()
+    {
+        Console.WriteLine("Cheese Pizza Baked");
+    }
+
+    public void Cut()
+    {
+        Console.WriteLine("Cheese Pizza Cut");
+    }
 }
 
 class VeggiePizza : IPizza
 {
-    public void Prepare() => Console.WriteLine("Veggie Pizza Prepared");
-    public void Bake() => Console.WriteLine("Veggie Pizza Baked");
-    public void Cut() => Console.WriteLine("Veggie Pizza Cut");
-}
+    public void Prepare()
+    {
+        Console.WriteLine("Veggie Pizza Prepared");
+    }
 
-// === Creator (Abstract Factory) ===
+    public void Bake()
+    {
+        Console.WriteLine("Veggie Pizza Baked");
+    }
+
+    public void Cut()
+    {
+        Console.WriteLine("Veggie Pizza Cut");
+    }
+}
 
 abstract class PizzaStore
 {
@@ -41,8 +71,6 @@ abstract class PizzaStore
         return pizza;
     }
 }
-
-// === Concrete Creators ===
 
 class AnkaraPizzaStore : PizzaStore
 {
@@ -69,10 +97,3 @@ class IstanbulPizzaStore : PizzaStore
         };
     }
 }
-
-// === Usage ===
-// PizzaStore store = new AnkaraPizzaStore();
-// IPizza pizza = store.OrderPizza("cheese");
-//
-// Yeni pizza türü? Yeni class yaz. Yeni şehir? Yeni store yaz.
-// Hiçbir mevcut kod değişmez → OCP
