@@ -1899,32 +1899,55 @@
 
 <!-- ═══════════ PATTERN RELATIONSHIPS ═══════════ -->
 <section class="section fade-in" style="text-align:center;">
-    <h2 style="font-size:2rem; margin-bottom:0.5rem;">🔗 How Patterns Work Together</h2>
-    <p style="color:var(--text-secondary); margin-bottom:2rem;">In real projects, patterns combine. Here's the map.</p>
+    <h2 style="font-size:2rem; margin-bottom:0.5rem;">🔗 Gerçek Projede Pattern'ler Birlikte Nasıl Çalışır?</h2>
+    <p style="color:var(--text-secondary); margin-bottom:2rem;">Bir müşteri online mağazadan ürün satın alıyor. Her adımda farklı bir pattern devreye giriyor.</p>
 
-    <div class="pattern-diagram" style="text-align:left; max-width:700px; margin:0 auto;">
-        <h4>🗺️ Real-World Architecture Example</h4>
+    <div class="pattern-diagram" style="text-align:left; max-width:750px; margin:0 auto;">
+        <h4>🛒 Senaryo: Müşteri Sipariş Veriyor</h4>
 
-        <span class="cls">E-Commerce Order Pipeline</span>
+        <span class="arrow">Adım 1 — Ödeme yöntemi seçiliyor</span>
+        Müşteri "PayPal ile öde" diyor.
+        <span class="cls">PaymentFactory</span>.<span class="iface">Create("paypal")</span> → <span class="cls">PayPalPayment</span> döner
+        <span class="cm">🏭 Factory: Hangi ödeme class'ını üreteceğine karar verir.</span>
+        <span class="cm">   Müşteri kredi kartı seçseydi → CreditCardPayment dönerdi.</span>
 
-        <span class="arrow">1.</span> <span class="cls">PaymentStrategyFactory</span> (<span class="iface">Factory</span>)
-           → Creates <span class="cls">IPaymentStrategy</span> (<span class="iface">Strategy</span>)
-           → CreditCard / PayPal / Crypto
+        <span class="arrow">────────────────────────────────────────────</span>
 
-        <span class="arrow">2.</span> <span class="cls">OrderService</span> places order
-           → Publishes <span class="cls">OrderPlaced</span> event (<span class="iface">Observer</span>)
-           → EmailHandler, InventoryHandler, AnalyticsHandler
+        <span class="arrow">Adım 2 — Ödeme işleniyor</span>
+        <span class="cls">CheckoutService</span> ödeme alıyor: <span class="iface">IPaymentStrategy</span>.<span class="cls">Pay(150₺)</span>
+        <span class="cm">🎯 Strategy: Hangi ödeme yöntemi olursa olsun, aynı Pay() çağrılır.</span>
+        <span class="cm">   PayPal mı, Stripe mı? CheckoutService bilmez, umursamaz.</span>
 
-        <span class="arrow">3.</span> <span class="cls">IOrderRepository</span> wraps database access
-           → <span class="cls">CachingDecorator</span> (<span class="iface">Decorator</span>)
-           → <span class="cls">LoggingDecorator</span> (<span class="iface">Decorator</span>)
+        <span class="arrow">────────────────────────────────────────────</span>
 
-        <span class="arrow">4.</span> <span class="cls">AppConfig.Instance</span> (<span class="iface">Singleton</span>)
-           → Shared configuration across all services
+        <span class="arrow">Adım 3 — Sipariş kaydediliyor</span>
+        Veritabanına yazmadan önce otomatik olarak:
+        → <span class="cls">LoggingDecorator</span>: "Sipariş #4521 kaydediliyor" loglar
+        → <span class="cls">CachingDecorator</span>: Cache'e ekler
+        → <span class="cls">SqlRepository</span>: Veritabanına yazar
+        <span class="cm">🎨 Decorator: Her katman bir özellik ekler. Birbirini sarar.</span>
 
-        <span class="arrow">────────────────────────────</span>
-        <span class="cls">Result:</span> Each pattern solves ONE problem.
-                 Together they build a clean, extensible system.
+        <span class="arrow">────────────────────────────────────────────</span>
+
+        <span class="arrow">Adım 4 — Sipariş onaylanıyor → Herkes bilgilendirilir</span>
+        <span class="cls">OrderPlaced</span> event'i fırlatılır. Kim dinliyorsa otomatik çalışır:
+        → <span class="cls">EmailHandler</span>: Müşteriye onay maili gönderir
+        → <span class="cls">InventoryHandler</span>: Stoktan düşer
+        → <span class="cls">AnalyticsHandler</span>: İstatistik kaydeder
+        <span class="cm">📡 Observer: Sipariş servisi bu 3 handler'ı bilmez bile.</span>
+        <span class="cm">   Yeni handler eklemek? Subscribe et. Sipariş servisi değişmez.</span>
+
+        <span class="arrow">────────────────────────────────────────────</span>
+
+        <span class="arrow">Adım 5 — Tüm bu süreçte ayarlar nereden geliyor?</span>
+        <span class="cls">AppConfig.Instance</span> — tek bir nesne, uygulamanın her yerinde aynı.
+        SMTP server adresi, API key'ler, para birimi hep buradan okunur.
+        <span class="cm">🔒 Singleton: Aynı config nesnesini herkes paylaşır.</span>
+
+        <span class="arrow">════════════════════════════════════════════</span>
+        <strong>5 pattern, 5 farklı sorun, 1 temiz sistem.</strong>
+        Hiçbir class diğerinin iç detayını bilmez.
+        Hepsi <span class="iface">interface</span> üzerinden konuşur. <span class="cls">Bu DIP'tir.</span>
     </div>
 </section>
 
