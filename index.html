@@ -465,6 +465,88 @@
             text-align: center;
         }
 
+        /* ═══ RED FLAGS ═══ */
+        .red-flags {
+            background: rgba(255, 107, 107, 0.06);
+            border: 1px solid rgba(255, 107, 107, 0.15);
+            border-radius: 14px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem auto;
+            max-width: 1100px;
+        }
+        .red-flags h4 { color: #ff6b6b; margin-bottom: 0.8rem; font-size: 1rem; }
+        .red-flags ul { list-style: none; padding: 0; }
+        .red-flags li { padding: 0.3rem 0; color: var(--text-secondary); font-size: 0.9rem; }
+        .red-flags li::before { content: '🚩 '; }
+
+        /* ═══ COMMON MISTAKES ═══ */
+        .mistakes {
+            background: rgba(255, 217, 61, 0.06);
+            border: 1px solid rgba(255, 217, 61, 0.15);
+            border-radius: 14px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem auto;
+            max-width: 1100px;
+        }
+        .mistakes h4 { color: #ffd93d; margin-bottom: 0.8rem; font-size: 1rem; }
+        .mistakes ul { list-style: none; padding: 0; }
+        .mistakes li { padding: 0.3rem 0; color: var(--text-secondary); font-size: 0.9rem; }
+        .mistakes li::before { content: '⚡ '; }
+
+        /* ═══ FRAMEWORK EXAMPLES ═══ */
+        .frameworks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem auto;
+            max-width: 1100px;
+        }
+        .framework-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            text-align: center;
+        }
+        .framework-item .fw-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.3rem; }
+        .framework-item .fw-detail { color: var(--text-secondary); font-size: 0.82rem; }
+        .framework-item code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+
+        /* ═══ MEMORY TRICK ═══ */
+        .memory-trick {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: linear-gradient(135deg, rgba(77,150,255,0.08), rgba(192,132,252,0.08));
+            border: 1px solid rgba(77,150,255,0.2);
+            border-radius: 14px;
+            padding: 1.2rem 1.8rem;
+            margin: 1.5rem auto;
+            max-width: 1100px;
+        }
+        .memory-trick .trick-icon { font-size: 2rem; }
+        .memory-trick .trick-word { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
+        .memory-trick .trick-desc { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* ═══ PATTERN DIAGRAM ═══ */
+        .pattern-diagram {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem auto;
+            max-width: 1100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            overflow-x: auto;
+        }
+        .pattern-diagram h4 { font-family: 'Inter', sans-serif; color: var(--text-primary); margin-bottom: 0.8rem; font-size: 1rem; }
+        .pattern-diagram .cls { color: #6bcb77; font-weight: 600; }
+        .pattern-diagram .iface { color: #4d96ff; font-weight: 600; }
+        .pattern-diagram .arrow { color: #c084fc; }
+
         /* ═══ FOOTER ═══ */
         .footer {
             text-align: center;
@@ -1052,6 +1134,56 @@
         <h3>🗣️ Interview Answer</h3>
         <p>"Strategy Pattern encapsulates a family of algorithms behind a common interface, letting me swap them at runtime. For example, in a payment system, I define an <code>IPaymentStrategy</code> interface, then implement <code>CreditCardPayment</code>, <code>PayPalPayment</code>, and <code>CryptoPayment</code>. The checkout service receives a strategy through its constructor and calls <code>Pay()</code> without caring which one it is. Adding Apple Pay? Create a new class. Zero changes to existing code. This satisfies both OCP and DIP."</p>
     </div>
+
+    <div class="pattern-diagram">
+        <h4>📐 Structure Diagram</h4>
+        <span class="iface">┌─ IStrategy ─────────┐</span>
+        │  <span class="iface">+ Execute()</span>          │
+        <span class="iface">└─────────────────────┘</span>
+              <span class="arrow">▲ implements</span>
+        <span class="cls">┌─────┴──────┐</span>
+   <span class="cls">StrategyA    StrategyB    StrategyC</span>
+              <span class="arrow">▲ uses</span>
+        <span class="cls">┌─────┴──────┐</span>
+        │  <span class="cls">Context</span>     │
+        │ - strategy  │
+        │ <span class="iface">+ SetStrategy()</span> │
+        <span class="cls">└─────────────┘</span>
+    </div>
+
+    <div class="red-flags">
+        <h4>🚩 Red Flags — You Need Strategy When:</h4>
+        <ul>
+            <li>Growing <code>switch/case</code> or <code>if-else</code> chain selecting an algorithm</li>
+            <li>Copy-pasting similar logic with minor algorithm differences</li>
+            <li>A method parameter like <code>string algorithm</code> or <code>string mode</code></li>
+            <li>You need to change behavior at runtime based on user input or config</li>
+        </ul>
+    </div>
+
+    <div class="mistakes">
+        <h4>⚡ Common Mistakes</h4>
+        <ul>
+            <li>Creating a strategy for something that will never change — over-engineering</li>
+            <li>Putting shared logic in every strategy instead of the Context class</li>
+            <li>Not providing a default strategy, causing NullReferenceException</li>
+        </ul>
+    </div>
+
+    <div class="frameworks">
+        <div class="framework-item"><div class="fw-name">.NET</div><div class="fw-detail"><code>IComparer&lt;T&gt;</code> in sorting</div></div>
+        <div class="framework-item"><div class="fw-name">ASP.NET</div><div class="fw-detail"><code>IAuthenticationScheme</code></div></div>
+        <div class="framework-item"><div class="fw-name">Java</div><div class="fw-detail"><code>Comparator&lt;T&gt;</code> interface</div></div>
+        <div class="framework-item"><div class="fw-name">JavaScript</div><div class="fw-detail"><code>Array.sort(compareFn)</code></div></div>
+    </div>
+
+    <div class="memory-trick">
+        <span class="trick-icon">🔌</span>
+        <div>
+            <div class="trick-word">"Plugin"</div>
+            <div class="trick-desc">Strategy = plug in any algorithm. Like USB — same port, different devices.</div>
+        </div>
+    </div>
 </section>
 
 <div class="divider"></div>
@@ -1117,6 +1249,56 @@
     <div class="interview-box">
         <h3>🗣️ Interview Answer</h3>
         <p>"Observer Pattern creates a pub/sub relationship between objects. I use it when one state change should trigger multiple reactions. For example, when an order is placed, I need to send a confirmation email, update inventory, notify shipping, and log analytics. Instead of the OrderService calling all four, I publish an <code>OrderPlaced</code> event. Each handler subscribes independently. Adding a loyalty points handler? Just create a new observer and subscribe it — the OrderService never changes. In C#, this maps directly to <code>event</code> and <code>EventHandler&lt;T&gt;</code>."</p>
+    </div>
+
+    <div class="pattern-diagram">
+        <h4>📐 Structure Diagram</h4>
+        <span class="iface">┌─ IObserver ──────────┐</span>
+        │  <span class="iface">+ Update(event)</span>      │
+        <span class="iface">└──────────────────────┘</span>
+              <span class="arrow">▲ implements</span>
+        <span class="cls">┌─────┴──────┐</span>
+   <span class="cls">EmailHandler  SMSHandler  SlackHandler</span>
+
+        <span class="cls">┌── Subject ───────────┐</span>
+        │ - observers: List    │
+        │ <span class="iface">+ Subscribe(observer)</span> │
+        │ <span class="iface">+ Notify(event)</span>       │
+        <span class="cls">└──────────────────────┘</span>
+    </div>
+
+    <div class="red-flags">
+        <h4>🚩 Red Flags — You Need Observer When:</h4>
+        <ul>
+            <li>A method directly calls 5+ services after a state change</li>
+            <li>Adding a new notification channel requires modifying the event source</li>
+            <li>Tight coupling between event producer and consumers</li>
+            <li>You say "when X happens, also do Y, Z, and W"</li>
+        </ul>
+    </div>
+
+    <div class="mistakes">
+        <h4>⚡ Common Mistakes</h4>
+        <ul>
+            <li>Forgetting to unsubscribe — causes memory leaks and ghost notifications</li>
+            <li>Observers modifying the subject's state during notification — infinite loops</li>
+            <li>Not handling exceptions in one observer — blocks all subsequent observers</li>
+        </ul>
+    </div>
+
+    <div class="frameworks">
+        <div class="framework-item"><div class="fw-name">C#</div><div class="fw-detail"><code>event</code> + <code>EventHandler&lt;T&gt;</code></div></div>
+        <div class="framework-item"><div class="fw-name">.NET</div><div class="fw-detail"><code>IObservable&lt;T&gt;</code> / Rx</div></div>
+        <div class="framework-item"><div class="fw-name">JavaScript</div><div class="fw-detail"><code>addEventListener()</code></div></div>
+        <div class="framework-item"><div class="fw-name">React</div><div class="fw-detail"><code>useEffect</code> + state changes</div></div>
+    </div>
+
+    <div class="memory-trick">
+        <span class="trick-icon">📰</span>
+        <div>
+            <div class="trick-word">"Newsletter"</div>
+            <div class="trick-desc">Observer = subscribe to updates. New post? Everyone on the list gets notified.</div>
+        </div>
     </div>
 </section>
 
@@ -1184,6 +1366,56 @@
     <div class="interview-box">
         <h3>🗣️ Interview Answer</h3>
         <p>"Factory Pattern abstracts object creation away from the client. Instead of scattering <code>new ConcreteClass()</code> throughout the codebase, I centralize creation in a factory. For example, a <code>NotificationFactory</code> creates the right notification sender (Email, SMS, Push) based on user preferences. The caller just says <code>factory.Create("email")</code> and gets an <code>INotification</code> back. This follows DIP because the caller depends on the abstraction, not the concrete type. It also follows OCP because adding WhatsApp means registering a new creator, not modifying existing code."</p>
+    </div>
+
+    <div class="pattern-diagram">
+        <h4>📐 Structure Diagram</h4>
+        <span class="iface">┌─ IProduct ───────────┐</span>
+        │  <span class="iface">+ Create()</span>            │
+        │  <span class="iface">+ Process()</span>           │
+        <span class="iface">└──────────────────────┘</span>
+              <span class="arrow">▲ implements</span>
+        <span class="cls">┌─────┴──────┐</span>
+   <span class="cls">ProductA    ProductB    ProductC</span>
+              <span class="arrow">▲ creates</span>
+        <span class="cls">┌── Factory ───────────┐</span>
+        │ <span class="iface">+ Create(type): IProduct</span>│
+        │ <span class="iface">+ Register(type, fn)</span>   │
+        <span class="cls">└──────────────────────┘</span>
+    </div>
+
+    <div class="red-flags">
+        <h4>🚩 Red Flags — You Need Factory When:</h4>
+        <ul>
+            <li><code>new ConcreteClass()</code> scattered across the codebase</li>
+            <li>A switch statement deciding which class to instantiate</li>
+            <li>Client code needs to know implementation details to create objects</li>
+            <li>Adding a new product type requires changes in multiple files</li>
+        </ul>
+    </div>
+
+    <div class="mistakes">
+        <h4>⚡ Common Mistakes</h4>
+        <ul>
+            <li>Making the factory too generic — a factory that creates "anything" defeats the purpose</li>
+            <li>Returning <code>object</code> instead of a typed interface — loses type safety</li>
+            <li>Putting business logic inside the factory — it should only CREATE, not process</li>
+        </ul>
+    </div>
+
+    <div class="frameworks">
+        <div class="framework-item"><div class="fw-name">.NET DI</div><div class="fw-detail"><code>IServiceProvider</code></div></div>
+        <div class="framework-item"><div class="fw-name">ASP.NET</div><div class="fw-detail"><code>IHttpClientFactory</code></div></div>
+        <div class="framework-item"><div class="fw-name">EF Core</div><div class="fw-detail"><code>DbContextFactory</code></div></div>
+        <div class="framework-item"><div class="fw-name">Java</div><div class="fw-detail"><code>DocumentBuilderFactory</code></div></div>
+    </div>
+
+    <div class="memory-trick">
+        <span class="trick-icon">🍔</span>
+        <div>
+            <div class="trick-word">"Kitchen"</div>
+            <div class="trick-desc">Factory = a kitchen. You order food, it decides how to make it. You never go cook it yourself.</div>
+        </div>
     </div>
 </section>
 
@@ -1280,6 +1512,54 @@
         <h3>🗣️ Interview Answer</h3>
         <p>"Singleton ensures only one instance of a class exists application-wide. I use it for shared resources like configuration or logging. In C#, the safest implementation uses <code>Lazy&lt;T&gt;</code> which guarantees thread safety. However, in modern apps I prefer registering the class as a singleton in the DI container using <code>AddSingleton&lt;T&gt;()</code> — this gives me the same single-instance behavior but with full testability since I can inject mocks. The classic Singleton creates hidden dependencies and global state, so I treat it as a last resort, not a go-to."</p>
     </div>
+
+    <div class="pattern-diagram">
+        <h4>📐 Structure Diagram</h4>
+        <span class="cls">┌── Singleton ─────────────┐</span>
+        │ <span class="iface">- static instance</span>         │
+        │ <span class="iface">- private Constructor()</span>   │
+        │ <span class="iface">+ static Instance { get }</span> │
+        <span class="cls">└──────────────────────────┘</span>
+
+        <span class="arrow">Thread A ──→ Instance ──→ ┐</span>
+        <span class="arrow">Thread B ──→ Instance ──→ ├─→ Same Object</span>
+        <span class="arrow">Thread C ──→ Instance ──→ ┘</span>
+    </div>
+
+    <div class="red-flags">
+        <h4>🚩 Red Flags — You Need Singleton When:</h4>
+        <ul>
+            <li>Resource is expensive to create (DB connection, HTTP client pool)</li>
+            <li>Multiple instances would cause conflicts (config, logging)</li>
+            <li>You need a global access point that's shared across the app</li>
+            <li>The object is stateless or has read-only state</li>
+        </ul>
+    </div>
+
+    <div class="mistakes">
+        <h4>⚡ Common Mistakes</h4>
+        <ul>
+            <li>Using Singleton for everything — turns into God Object anti-pattern</li>
+            <li>Naive implementation without thread-safety — race conditions in production</li>
+            <li>Storing mutable state — causes unpredictable side effects across the app</li>
+            <li>Using Singleton instead of DI — makes unit testing nearly impossible</li>
+        </ul>
+    </div>
+
+    <div class="frameworks">
+        <div class="framework-item"><div class="fw-name">.NET DI</div><div class="fw-detail"><code>AddSingleton&lt;T&gt;()</code></div></div>
+        <div class="framework-item"><div class="fw-name">ASP.NET</div><div class="fw-detail"><code>IConfiguration</code></div></div>
+        <div class="framework-item"><div class="fw-name">EF Core</div><div class="fw-detail"><code>DbContext</code> (Scoped)</div></div>
+        <div class="framework-item"><div class="fw-name">Java Spring</div><div class="fw-detail"><code>@Scope("singleton")</code></div></div>
+    </div>
+
+    <div class="memory-trick">
+        <span class="trick-icon">🏛️</span>
+        <div>
+            <div class="trick-word">"President"</div>
+            <div class="trick-desc">Singleton = one president. Everyone refers to the same person. You don't elect a new one each time.</div>
+        </div>
+    </div>
 </section>
 
 <div class="divider"></div>
@@ -1345,6 +1625,54 @@
     <div class="interview-box">
         <h3>🗣️ Interview Answer</h3>
         <p>"Decorator Pattern lets me add behavior to objects dynamically by wrapping them, without subclassing. Think of ASP.NET middleware — each middleware wraps the next, adding authentication, logging, or CORS handling. Another example: I have an <code>IDataService</code> that reads from a database. I can wrap it with a <code>CachingDecorator</code> that checks the cache first, then a <code>LoggingDecorator</code> that logs every call: <code>new LoggingDecorator(new CachingDecorator(new SqlDataService()))</code>. Each wrapper adds exactly one responsibility. I can compose them in any order with zero modification to the original classes."</p>
+    </div>
+
+    <div class="pattern-diagram">
+        <h4>📐 Structure Diagram</h4>
+        <span class="iface">┌─ IComponent ─────────┐</span>
+        │  <span class="iface">+ Operation()</span>         │
+        <span class="iface">└──────────────────────┘</span>
+            <span class="arrow">▲            ▲</span>
+    <span class="cls">ConcreteComponent  BaseDecorator</span>
+                       <span class="arrow">▲ extends</span>
+                 <span class="cls">┌─────┴──────┐</span>
+            <span class="cls">DecoratorA   DecoratorB   DecoratorC</span>
+
+        <span class="arrow">Wrapping:</span> <span class="cls">C( B( A( Component ) ) )</span>
+    </div>
+
+    <div class="red-flags">
+        <h4>🚩 Red Flags — You Need Decorator When:</h4>
+        <ul>
+            <li>Class explosion: <code>CoffeeWithMilk</code>, <code>CoffeeWithMilkAndSugar</code>, etc.</li>
+            <li>You need to combine optional features: logging + caching + auth</li>
+            <li>Inheritance tree is growing sideways with feature combinations</li>
+            <li>You want to add/remove behavior without touching existing classes</li>
+        </ul>
+    </div>
+
+    <div class="mistakes">
+        <h4>⚡ Common Mistakes</h4>
+        <ul>
+            <li>Making decorators depend on each other's order — they should be independent</li>
+            <li>Adding too many layers — debugging 10 nested wrappers is painful</li>
+            <li>Using decorator when simple inheritance would suffice (only 2 variants)</li>
+        </ul>
+    </div>
+
+    <div class="frameworks">
+        <div class="framework-item"><div class="fw-name">ASP.NET</div><div class="fw-detail"><code>app.UseMiddleware()</code></div></div>
+        <div class="framework-item"><div class="fw-name">.NET</div><div class="fw-detail"><code>Stream</code> → <code>BufferedStream</code></div></div>
+        <div class="framework-item"><div class="fw-name">Java</div><div class="fw-detail"><code>InputStream</code> wrappers</div></div>
+        <div class="framework-item"><div class="fw-name">Python</div><div class="fw-detail"><code>@decorator</code> syntax</div></div>
+    </div>
+
+    <div class="memory-trick">
+        <span class="trick-icon">☕</span>
+        <div>
+            <div class="trick-word">"Toppings"</div>
+            <div class="trick-desc">Decorator = coffee toppings. Same cup, stack anything on top: milk, sugar, whip, caramel.</div>
+        </div>
     </div>
 </section>
 
@@ -1440,6 +1768,139 @@
         </tbody>
     </table>
 </section>
+
+<!-- ═══════════ CODE SMELL DETECTOR ═══════════ -->
+<section class="cheat-sheet fade-in" id="smells">
+    <h2>🔍 Code Smell Detector</h2>
+    <p style="color:var(--text-secondary); margin-bottom: 2rem;">Spot the smell → Apply the pattern.</p>
+    <table class="cheat-table">
+        <thead>
+            <tr>
+                <th>Code Smell</th>
+                <th>What You See</th>
+                <th>Pattern to Apply</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>🚩 <strong>Growing switch/case on algorithm type</strong></td>
+                <td><code>switch(algo) { case "bubble":... }</code></td>
+                <td><strong style="color:#ff9a3c;">Strategy</strong></td>
+            </tr>
+            <tr>
+                <td>🚩 <strong>Method calls 5+ services after state change</strong></td>
+                <td><code>SendEmail(); SendSMS(); UpdateDB();</code></td>
+                <td><strong style="color:#ff9a3c;">Observer</strong></td>
+            </tr>
+            <tr>
+                <td>🚩 <strong>Switch on type to create objects</strong></td>
+                <td><code>switch(type) { case "pdf": new PdfDoc() }</code></td>
+                <td><strong style="color:#ff9a3c;">Factory</strong></td>
+            </tr>
+            <tr>
+                <td>🚩 <strong>Multiple instances cause conflicts</strong></td>
+                <td><code>new Database(); new Database(); // conflicts!</code></td>
+                <td><strong style="color:#ff9a3c;">Singleton</strong></td>
+            </tr>
+            <tr>
+                <td>🚩 <strong>Class explosion from combinations</strong></td>
+                <td><code>CoffeeWithMilk, CoffeeWithMilkSugar...</code></td>
+                <td><strong style="color:#ff9a3c;">Decorator</strong></td>
+            </tr>
+            <tr>
+                <td>🚩 <strong>Class has 10+ methods, 500+ lines</strong></td>
+                <td><code>class UserService { /* everything */ }</code></td>
+                <td><strong style="color:var(--accent-s);">SRP</strong></td>
+            </tr>
+            <tr>
+                <td>🚩 <strong>Editing 10 files to add a feature</strong></td>
+                <td>Every new discount type = modify calculator</td>
+                <td><strong style="color:var(--accent-o);">OCP</strong></td>
+            </tr>
+            <tr>
+                <td>🚩 <strong>NotImplementedException in interface</strong></td>
+                <td><code>void Eat() => throw new NotImplementedException()</code></td>
+                <td><strong style="color:var(--accent-i);">ISP</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ PATTERN COMPARISON ═══════════ -->
+<section class="cheat-sheet fade-in" id="comparison">
+    <h2>🔀 Pattern Comparison — What's the Difference?</h2>
+    <table class="cheat-table">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Strategy vs State</strong></td>
+                <td>Both swap behavior. <strong>Strategy</strong>: client chooses the algorithm. <strong>State</strong>: object changes behavior automatically based on internal state.</td>
+            </tr>
+            <tr>
+                <td><strong>Strategy vs Template Method</strong></td>
+                <td><strong>Strategy</strong>: composition (inject interface). <strong>Template Method</strong>: inheritance (override methods in subclass).</td>
+            </tr>
+            <tr>
+                <td><strong>Observer vs Mediator</strong></td>
+                <td><strong>Observer</strong>: one-to-many broadcast. <strong>Mediator</strong>: many-to-many through a central hub (chat room).</td>
+            </tr>
+            <tr>
+                <td><strong>Factory vs Builder</strong></td>
+                <td><strong>Factory</strong>: creates whole objects in one step. <strong>Builder</strong>: constructs complex objects step-by-step.</td>
+            </tr>
+            <tr>
+                <td><strong>Decorator vs Proxy</strong></td>
+                <td><strong>Decorator</strong>: adds new behavior. <strong>Proxy</strong>: controls access to the same behavior (caching, lazy-loading, security).</td>
+            </tr>
+            <tr>
+                <td><strong>Decorator vs Inheritance</strong></td>
+                <td><strong>Inheritance</strong>: static (compile-time), creates class explosion. <strong>Decorator</strong>: dynamic (runtime), composable layers.</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ PATTERN RELATIONSHIPS ═══════════ -->
+<section class="section fade-in" style="text-align:center;">
+    <h2 style="font-size:2rem; margin-bottom:0.5rem;">🔗 How Patterns Work Together</h2>
+    <p style="color:var(--text-secondary); margin-bottom:2rem;">In real projects, patterns combine. Here's the map.</p>
+
+    <div class="pattern-diagram" style="text-align:left; max-width:700px; margin:0 auto;">
+        <h4>🗺️ Real-World Architecture Example</h4>
+
+        <span class="cls">E-Commerce Order Pipeline</span>
+
+        <span class="arrow">1.</span> <span class="cls">PaymentStrategyFactory</span> (<span class="iface">Factory</span>)
+           → Creates <span class="cls">IPaymentStrategy</span> (<span class="iface">Strategy</span>)
+           → CreditCard / PayPal / Crypto
+
+        <span class="arrow">2.</span> <span class="cls">OrderService</span> places order
+           → Publishes <span class="cls">OrderPlaced</span> event (<span class="iface">Observer</span>)
+           → EmailHandler, InventoryHandler, AnalyticsHandler
+
+        <span class="arrow">3.</span> <span class="cls">IOrderRepository</span> wraps database access
+           → <span class="cls">CachingDecorator</span> (<span class="iface">Decorator</span>)
+           → <span class="cls">LoggingDecorator</span> (<span class="iface">Decorator</span>)
+
+        <span class="arrow">4.</span> <span class="cls">AppConfig.Instance</span> (<span class="iface">Singleton</span>)
+           → Shared configuration across all services
+
+        <span class="arrow">────────────────────────────</span>
+        <span class="cls">Result:</span> Each pattern solves ONE problem.
+                 Together they build a clean, extensible system.
+    </div>
+</section>
+
+<div class="divider"></div>
 
 <!-- ═══════════ QUIZ CTA ═══════════ -->
 <section class="section fade-in" style="text-align:center; padding: 4rem 2rem;">
