@@ -212,7 +212,16 @@
         .nav-item[data-principle="l"] { --nav-color: var(--accent-l); }
         .nav-item[data-principle="i"] { --nav-color: var(--accent-i); }
         .nav-item[data-principle="d"] { --nav-color: var(--accent-d); }
+        .nav-item[data-principle="dp"] { --nav-color: #ff9a3c; }
         .nav-item.active { color: var(--nav-color); border-bottom-color: var(--nav-color); }
+
+        .nav-separator {
+            padding: 18px 12px;
+            color: rgba(255,255,255,0.15);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
 
         /* ═══ SECTIONS ═══ */
         .section {
@@ -575,11 +584,17 @@
 <!-- ═══════════ NAVIGATION ═══════════ -->
 <nav class="nav" id="navbar">
     <div class="nav-inner">
-        <a href="#srp" class="nav-item" data-principle="s">S — Single Responsibility</a>
-        <a href="#ocp" class="nav-item" data-principle="o">O — Open/Closed</a>
-        <a href="#lsp" class="nav-item" data-principle="l">L — Liskov Substitution</a>
-        <a href="#isp" class="nav-item" data-principle="i">I — Interface Segregation</a>
-        <a href="#dip" class="nav-item" data-principle="d">D — Dependency Inversion</a>
+        <a href="#srp" class="nav-item" data-principle="s">S — SRP</a>
+        <a href="#ocp" class="nav-item" data-principle="o">O — OCP</a>
+        <a href="#lsp" class="nav-item" data-principle="l">L — LSP</a>
+        <a href="#isp" class="nav-item" data-principle="i">I — ISP</a>
+        <a href="#dip" class="nav-item" data-principle="d">D — DIP</a>
+        <span class="nav-separator">│</span>
+        <a href="#strategy" class="nav-item" data-principle="dp">Strategy</a>
+        <a href="#observer" class="nav-item" data-principle="dp">Observer</a>
+        <a href="#factory" class="nav-item" data-principle="dp">Factory</a>
+        <a href="#singleton" class="nav-item" data-principle="dp">Singleton</a>
+        <a href="#decorator" class="nav-item" data-principle="dp">Decorator</a>
     </div>
 </nav>
 
@@ -960,6 +975,312 @@
     <div class="interview-box">
         <h3>🗣️ Interview Answer</h3>
         <p>"DIP says high-level business logic shouldn't directly depend on low-level infrastructure. Both depend on abstractions. Instead of UserService creating a MySqlDatabase instance, I define an IDatabase interface. UserService receives IDatabase through its constructor — it doesn't know if it's MySQL, PostgreSQL, or a mock for testing. This makes the system flexible, testable, and easy to evolve without touching business logic."</p>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ DESIGN PATTERNS HEADER ═══════════ -->
+<section class="section fade-in" style="text-align:center; padding-bottom: 2rem;">
+    <div class="hero-badge" style="margin-bottom:1.5rem;">🏗️ Design Patterns</div>
+    <h2 style="font-size:2.2rem; font-weight:800;">Gang of Four Patterns</h2>
+    <p style="color:var(--text-secondary); max-width:600px; margin:1rem auto 0;">Proven, reusable solutions to common problems. These patterns are <strong>implementations</strong> of SOLID principles.</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ STRATEGY ═══════════ -->
+<section class="section fade-in" id="strategy">
+    <div class="section-header">
+        <span class="section-letter" style="color:#ff9a3c; text-shadow:0 0 30px rgba(255,154,60,0.3);">🎯</span>
+        <h2 class="section-title">Strategy Pattern</h2>
+        <div class="section-quote" style="border-color: #ff9a3c;">
+            "Define a family of algorithms, encapsulate each one, and make them interchangeable."
+            <cite>— Gang of Four</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🎮 The Game Controller Analogy</h3>
+        <p>A game console works with <strong>any controller</strong> — wired, wireless, fight stick, racing wheel. The console doesn't care which one you use. It knows the <strong>interface</strong>: buttons, joystick, triggers. Plug in any controller and play. That's Strategy.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Hardcoded algorithms</div>
+            <div class="code-content"><pre><span class="kw">public</span> List&lt;<span class="tp">int</span>&gt; <span class="fn">Sort</span>(List&lt;<span class="tp">int</span>&gt; data, <span class="tp">string</span> algo)
+{
+    <span class="kw">switch</span> (algo)
+    {
+        <span class="kw">case</span> <span class="str">"bubble"</span>: <span class="cm">/* bubble sort */</span>
+        <span class="kw">case</span> <span class="str">"quick"</span>:  <span class="cm">/* quick sort */</span>
+        <span class="kw">case</span> <span class="str">"merge"</span>:  <span class="cm">/* merge sort */</span>
+        <span class="cm">// 💥 New algorithm = modify this method</span>
+    }
+}</pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Swappable strategies</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">ISortStrategy</span>
+{  List&lt;<span class="tp">int</span>&gt; <span class="fn">Sort</span>(List&lt;<span class="tp">int</span>&gt; data); }
+
+<span class="kw">public class</span> <span class="tp">BubbleSort</span> : <span class="tp">ISortStrategy</span> { <span class="cm">/*...*/</span> }
+<span class="kw">public class</span> <span class="tp">QuickSort</span> : <span class="tp">ISortStrategy</span> { <span class="cm">/*...*/</span> }
+
+<span class="kw">public class</span> <span class="tp">SortingService</span>
+{
+    <span class="kw">private</span> <span class="tp">ISortStrategy</span> _strategy;
+    <span class="kw">public void</span> <span class="fn">SetStrategy</span>(<span class="tp">ISortStrategy</span> s)
+        => _strategy = s;
+    <span class="kw">public</span> List&lt;<span class="tp">int</span>&gt; <span class="fn">Sort</span>(List&lt;<span class="tp">int</span>&gt; data)
+        => _strategy.<span class="fn">Sort</span>(data);
+}
+<span class="cm">// ✅ Swap at runtime. Zero changes.</span></pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">🔄</span><h4>Runtime Swapping</h4><p>Change algorithms on the fly without modifying client code.</p></div>
+        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + DIP</h4><p>New strategies = new classes. Context depends on interface.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Multiple algorithms for the same task: sorting, pricing, validation, compression.</p></div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ OBSERVER ═══════════ -->
+<section class="section fade-in" id="observer">
+    <div class="section-header">
+        <span class="section-letter" style="color:#ff9a3c; text-shadow:0 0 30px rgba(255,154,60,0.3);">📡</span>
+        <h2 class="section-title">Observer Pattern</h2>
+        <div class="section-quote" style="border-color: #ff9a3c;">
+            "Define a one-to-many dependency so that when one object changes state, all dependents are notified."
+            <cite>— Gang of Four</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>📰 The Newsletter Analogy</h3>
+        <p>You <strong>subscribe</strong> to a newsletter. When a new article is published, everyone subscribed gets notified. You don't keep checking the website. And you can <strong>unsubscribe</strong> anytime. The publisher doesn't know who you are — just that you're on the list.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Hardcoded notifications</div>
+            <div class="code-content"><pre><span class="kw">public void</span> <span class="fn">NotifyRestock</span>(<span class="tp">string</span> product)
+{
+    <span class="cm">// 💥 Store knows about EVERY channel</span>
+    <span class="fn">SendEmail</span>(product);
+    <span class="fn">SendSMS</span>(product);
+    <span class="fn">SendSlack</span>(product);
+    <span class="fn">SendPush</span>(product);
+    <span class="cm">// Want Telegram? Modify THIS method.</span>
+}</pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Subscribe/unsubscribe</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IObserver</span>
+{  <span class="kw">void</span> <span class="fn">OnProductAvailable</span>(<span class="tp">ProductEvent</span> e); }
+
+<span class="kw">public class</span> <span class="tp">Store</span> <span class="cm">// Subject</span>
+{
+    List&lt;<span class="tp">IObserver</span>&gt; _observers = <span class="kw">new</span>();
+    <span class="kw">public void</span> <span class="fn">Subscribe</span>(<span class="tp">IObserver</span> o)
+        => _observers.<span class="fn">Add</span>(o);
+    <span class="kw">public void</span> <span class="fn">Notify</span>(<span class="tp">ProductEvent</span> e)
+        => _observers.<span class="fn">ForEach</span>(o => o.<span class="fn">OnProductAvailable</span>(e));
+}
+
+<span class="kw">public class</span> <span class="tp">EmailNotifier</span> : <span class="tp">IObserver</span> { <span class="cm">/*...*/</span> }
+<span class="kw">public class</span> <span class="tp">SlackNotifier</span> : <span class="tp">IObserver</span> { <span class="cm">/*...*/</span> }
+<span class="cm">// ✅ Add/remove observers freely.</span></pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">📢</span><h4>One-to-Many</h4><p>One subject, many observers. State changes propagate automatically.</p></div>
+        <div class="key-point"><span class="emoji">🔓</span><h4>Loose Coupling</h4><p>Subject doesn't know concrete observers. Only the interface.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Event systems, notifications, real-time feeds, pub/sub messaging.</p></div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ FACTORY ═══════════ -->
+<section class="section fade-in" id="factory">
+    <div class="section-header">
+        <span class="section-letter" style="color:#ff9a3c; text-shadow:0 0 30px rgba(255,154,60,0.3);">🏭</span>
+        <h2 class="section-title">Factory Pattern</h2>
+        <div class="section-quote" style="border-color: #ff9a3c;">
+            "Define an interface for creating an object, but let subclasses decide which class to instantiate."
+            <cite>— Gang of Four</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🍔 The Restaurant Kitchen Analogy</h3>
+        <p>You tell the waiter "I want a burger." The <strong>kitchen</strong> (factory) decides how to make it — ingredients, cooking method, which chef. You don't go into the kitchen yourself. You just get a burger that satisfies the <strong>IFood</strong> interface.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Direct new with switch</div>
+            <div class="code-content"><pre><span class="kw">public</span> <span class="tp">object</span> <span class="fn">CreateDoc</span>(<span class="tp">string</span> type)
+{
+    <span class="kw">switch</span> (type)
+    {
+        <span class="kw">case</span> <span class="str">"pdf"</span>: <span class="kw">return new</span> <span class="tp">PdfDoc</span>();
+        <span class="kw">case</span> <span class="str">"word"</span>: <span class="kw">return new</span> <span class="tp">WordDoc</span>();
+        <span class="kw">case</span> <span class="str">"excel"</span>: <span class="kw">return new</span> <span class="tp">ExcelDoc</span>();
+        <span class="cm">// 💥 PowerPoint? Modify here.</span>
+    }
+}</pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Factory creates through abstraction</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IDocument</span>
+{
+    <span class="kw">void</span> <span class="fn">Generate</span>();
+    <span class="kw">void</span> <span class="fn">Save</span>(<span class="tp">string</span> path);
+}
+
+<span class="kw">public class</span> <span class="tp">PdfDoc</span> : <span class="tp">IDocument</span> { <span class="cm">/*...*/</span> }
+<span class="kw">public class</span> <span class="tp">WordDoc</span> : <span class="tp">IDocument</span> { <span class="cm">/*...*/</span> }
+
+<span class="kw">public static</span> <span class="tp">IDocument</span> <span class="fn">Create</span>(<span class="tp">string</span> type)
+    => _creators[type]();
+
+<span class="cm">// Register new types without modifying!</span>
+<span class="fn">Register</span>(<span class="str">"md"</span>, () => <span class="kw">new</span> <span class="tp">MarkdownDoc</span>());
+<span class="cm">// ✅ Client only knows IDocument</span></pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">🔨</span><h4>Delegate Creation</h4><p>Client asks for an object. Factory decides which concrete class.</p></div>
+        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + DIP</h4><p>New types = register them. Client code stays unchanged.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Complex object creation, multiple product families, plugin systems.</p></div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ SINGLETON ═══════════ -->
+<section class="section fade-in" id="singleton">
+    <div class="section-header">
+        <span class="section-letter" style="color:#ff9a3c; text-shadow:0 0 30px rgba(255,154,60,0.3);">🔒</span>
+        <h2 class="section-title">Singleton Pattern</h2>
+        <div class="section-quote" style="border-color: #ff9a3c;">
+            "Ensure a class has only one instance and provide a global point of access to it."
+            <cite>— Gang of Four</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🏛️ The President Analogy</h3>
+        <p>A country has only <strong>one president</strong> at a time. Everyone refers to the same person. You don't "create a new president" — you access the existing one. Singleton ensures only <strong>one instance</strong> exists application-wide.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Not thread-safe</div>
+            <div class="code-content"><pre><span class="kw">public class</span> <span class="tp">Database</span>
+{
+    <span class="kw">static</span> <span class="tp">Database</span> _instance;
+
+    <span class="kw">public static</span> <span class="tp">Database</span> Instance
+    {
+        <span class="kw">get</span>
+        {
+            <span class="cm">// 💥 Two threads check null simultaneously</span>
+            <span class="kw">if</span> (_instance == <span class="kw">null</span>)
+                _instance = <span class="kw">new</span> <span class="tp">Database</span>();
+            <span class="kw">return</span> _instance;
+        }
+    }
+}
+<span class="cm">// 💥 Not thread-safe. Not testable.</span></pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Thread-safe + DI-friendly</div>
+            <div class="code-content"><pre><span class="cm">// Option 1: Lazy&lt;T&gt; (thread-safe)</span>
+<span class="kw">public sealed class</span> <span class="tp">AppConfig</span>
+{
+    <span class="kw">static readonly</span> Lazy&lt;<span class="tp">AppConfig</span>&gt; _inst
+       = <span class="kw">new</span>(() => <span class="kw">new</span> <span class="tp">AppConfig</span>());
+    <span class="kw">public static</span> <span class="tp">AppConfig</span> Instance
+       => _inst.Value;
+}
+
+<span class="cm">// Option 2: DI Container (preferred)</span>
+<span class="cm">// builder.Services</span>
+<span class="cm">//   .AddSingleton&lt;ILogService, LogService&gt;();</span>
+<span class="cm">// ✅ Thread-safe. Testable. Mockable.</span></pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">⚠️</span><h4>Use Sparingly</h4><p>Most controversial pattern. Can become a God Object if overused.</p></div>
+        <div class="key-point"><span class="emoji">✅</span><h4>Good For</h4><p>Configuration, logging, connection pools, caches.</p></div>
+        <div class="key-point"><span class="emoji">💉</span><h4>Prefer DI</h4><p>Register as singleton in DI container for testability.</p></div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ DECORATOR ═══════════ -->
+<section class="section fade-in" id="decorator">
+    <div class="section-header">
+        <span class="section-letter" style="color:#ff9a3c; text-shadow:0 0 30px rgba(255,154,60,0.3);">🎨</span>
+        <h2 class="section-title">Decorator Pattern</h2>
+        <div class="section-quote" style="border-color: #ff9a3c;">
+            "Attach additional responsibilities to an object dynamically. A flexible alternative to subclassing."
+            <cite>— Gang of Four</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>☕ The Coffee Shop Analogy</h3>
+        <p>Start with <strong>basic coffee</strong> ($3). Add <strong>milk</strong> (+$0.50). Add <strong>whipped cream</strong> (+$0.70). Add <strong>caramel</strong> (+$0.60). Each addition <em>wraps</em> the previous. You can combine them <strong>any way you want</strong> — no class explosion.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Class explosion</div>
+            <div class="code-content"><pre><span class="cm">// Need a class for EVERY combination 💥</span>
+<span class="kw">class</span> <span class="tp">Coffee</span> { }
+<span class="kw">class</span> <span class="tp">CoffeeWithMilk</span> { }
+<span class="kw">class</span> <span class="tp">CoffeeWithMilkAndSugar</span> { }
+<span class="kw">class</span> <span class="tp">CoffeeWithMilkSugarWhip</span> { }
+<span class="kw">class</span> <span class="tp">CoffeeWithMilkSugarWhipCaramel</span> { }
+<span class="cm">// CoffeeWithSoyVanillaExtraShot...???</span>
+<span class="cm">// 💥 50+ classes needed!</span></pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Stackable wrappers</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IBeverage</span>
+{  <span class="tp">string</span> Desc { <span class="kw">get</span>; }  <span class="tp">decimal</span> Cost { <span class="kw">get</span>; } }
+
+<span class="kw">public class</span> <span class="tp">Coffee</span> : <span class="tp">IBeverage</span> { <span class="cm">/* $3 */</span> }
+
+<span class="kw">public class</span> <span class="tp">MilkDecorator</span> : <span class="tp">IBeverage</span>
+{
+    <span class="tp">IBeverage</span> _inner;
+    <span class="kw">public</span> <span class="tp">decimal</span> Cost => _inner.Cost + <span class="num">0.50m</span>;
+}
+
+<span class="cm">// Stack freely!</span>
+<span class="tp">IBeverage</span> order = <span class="kw">new</span> <span class="tp">CaramelDecorator</span>(
+  <span class="kw">new</span> <span class="tp">WhipDecorator</span>(
+    <span class="kw">new</span> <span class="tp">MilkDecorator</span>(<span class="kw">new</span> <span class="tp">Coffee</span>())));
+<span class="cm">// ✅ Infinite combos. No explosion.</span></pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">🧅</span><h4>Layer by Layer</h4><p>Each decorator adds ONE feature. Stack as many as you want.</p></div>
+        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + SRP</h4><p>Add behavior without modifying originals. Each decorator = one concern.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Configurable features, middleware pipelines, stream wrappers.</p></div>
     </div>
 </section>
 
