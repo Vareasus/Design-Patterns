@@ -1,18 +1,17 @@
-# 🏗️ SOLID Principles — The Ultimate Guide
+# 🏗️ SOLID Principles & Design Patterns — The Ultimate Guide
 
 <div align="center">
 
 ![SOLID](https://img.shields.io/badge/SOLID-Principles-blueviolet?style=for-the-badge&logo=dotnet&logoColor=white)
+![Design Patterns](https://img.shields.io/badge/Design-Patterns-ff6b6b?style=for-the-badge&logo=buffer&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-Examples-239120?style=for-the-badge&logo=csharp&logoColor=white)
-![Java](https://img.shields.io/badge/Java-Examples-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-Examples-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**The only SOLID guide you'll ever need. Period.**
+**The only SOLID & Design Patterns guide you'll ever need. Period.**
 
 *If you can't explain it after reading this, the problem isn't the concept — it's every other guide you've read.*
 
-[📖 Interactive Examples](./index.html) · [🧠 Take the Quiz](./quiz.html) · [🎯 Interview Cheat Sheet](#-interview-cheat-sheet) · [🏗️ Design Patterns](./Design-Patterns/)
+🌐 [**Live Demo**](https://vareasus.github.io/Design-Patterns/) · [📖 Interactive Guide](./index.html) · [🧠 Take the Quiz](./quiz.html) · [🏗️ Design Patterns](./Design-Patterns/) · [🎯 Cheat Sheet](#-interview-cheat-sheet)
 
 </div>
 
@@ -636,36 +635,55 @@ var service3 = new UserService(new MongoDatabase());
 Design-Patterns/
 ├── README.md                    ← You are here
 ├── index.html                   ← Interactive visual guide
+├── quiz.html                    ← SOLID & Patterns quiz
 │
-├── 1-SRP/
-│   ├── README.md                ← Deep dive into SRP
-│   ├── bad-example.cs           ← What NOT to do
-│   ├── good-example.cs          ← The right way
-│   └── real-world-scenario.cs   ← Production-realistic example
-│
-├── 2-OCP/
+├── 1-SRP/                       ← Single Responsibility Principle
 │   ├── README.md
 │   ├── bad-example.cs
 │   ├── good-example.cs
 │   └── real-world-scenario.cs
 │
-├── 3-LSP/
+├── 2-OCP/                       ← Open/Closed Principle
 │   ├── README.md
 │   ├── bad-example.cs
 │   ├── good-example.cs
 │   └── real-world-scenario.cs
 │
-├── 4-ISP/
+├── 3-LSP/                       ← Liskov Substitution Principle
 │   ├── README.md
 │   ├── bad-example.cs
 │   ├── good-example.cs
 │   └── real-world-scenario.cs
 │
-└── 5-DIP/
+├── 4-ISP/                       ← Interface Segregation Principle
+│   ├── README.md
+│   ├── bad-example.cs
+│   ├── good-example.cs
+│   └── real-world-scenario.cs
+│
+├── 5-DIP/                       ← Dependency Inversion Principle
+│   ├── README.md
+│   ├── bad-example.cs
+│   ├── good-example.cs
+│   └── real-world-scenario.cs
+│
+└── Design-Patterns/             ← GoF Design Patterns
     ├── README.md
-    ├── bad-example.cs
-    ├── good-example.cs
-    └── real-world-scenario.cs
+    ├── Strategy/
+    │   ├── bad-example.cs
+    │   └── good-example.cs
+    ├── Observer/
+    │   ├── bad-example.cs
+    │   └── good-example.cs
+    ├── Factory/
+    │   ├── bad-example.cs
+    │   └── good-example.cs
+    ├── Singleton/
+    │   ├── bad-example.cs
+    │   └── good-example.cs
+    └── Decorator/
+        ├── bad-example.cs
+        └── good-example.cs
 ```
 
 ---
