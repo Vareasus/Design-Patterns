@@ -12,7 +12,7 @@
 
 *If you can't explain it after reading this, the problem isn't the concept — it's every other guide you've read.*
 
-[📖 Interactive Examples](./index.html) · [🎯 Interview Cheat Sheet](#-interview-cheat-sheet) · [🧠 Real-World Analogies](#-why-solid-matters)
+[📖 Interactive Examples](./index.html) · [🧠 Take the Quiz](./quiz.html) · [🎯 Interview Cheat Sheet](#-interview-cheat-sheet) · [🏗️ Design Patterns](./Design-Patterns/)
 
 </div>
 
