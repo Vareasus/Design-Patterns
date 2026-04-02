@@ -1689,14 +1689,45 @@
         </div>
         <div class="code-block good">
             <div class="code-header">✅ GOOD — virtual/override ile davranış ekleme</div>
-            <div class="code-content"><pre><span class="kw">public class</span> <span class="tp">Laptop</span> : <span class="tp">Computer</span>
-{  <span class="kw">public void</span> <span class="fn">CloseLid</span>() =&gt;
-      Debug.WriteLine(<span class="str">$"{GetType().Name}'s lid is closing"</span>); }
+            <div class="code-content"><pre><span class="cm">// 1950s</span>
+<span class="kw">public class</span> <span class="tp">Computer</span>
+{
+    <span class="kw">public void</span> <span class="fn">Start</span>()
+    {
+        Console.WriteLine(<span class="str">$"{GetType().Name} is starting"</span>);
+    }
+    <span class="kw">public void</span> <span class="fn">ShutDown</span>()
+    {
+        Console.WriteLine(<span class="str">$"{GetType().Name} is shutting down"</span>);
+    }
+}
 
+<span class="cm">// 1970s</span>
+<span class="kw">public class</span> <span class="tp">Laptop</span> : <span class="tp">Computer</span>
+{
+    <span class="kw">public void</span> <span class="fn">OpenLid</span>()
+    {
+        Debug.WriteLine(<span class="str">$"{GetType().Name}'s lid is opening"</span>);
+    }
+    <span class="kw">public void</span> <span class="fn">CloseLid</span>()
+    {
+        Debug.WriteLine(<span class="str">$"{GetType().Name}'s lid is closing"</span>);
+    }
+}
+
+<span class="cm">// 1990s</span>
 <span class="kw">public class</span> <span class="tp">LaptopDecorator</span> : <span class="tp">Laptop</span>
 {
+    <span class="kw">public virtual void</span> <span class="fn">OpenLid</span>()
+    {
+        <span class="cm">// do something</span>
+        <span class="kw">base</span>.<span class="fn">OpenLid</span>();
+    }
     <span class="kw">public virtual void</span> <span class="fn">CloseLid</span>()
-    {  <span class="kw">base</span>.<span class="fn">CloseLid</span>(); <span class="cm">// orijinal davranış</span> }
+    {
+        <span class="kw">base</span>.<span class="fn">CloseLid</span>();
+        <span class="cm">// do something</span>
+    }
 }
 
 <span class="kw">public class</span> <span class="tp">DellLaptop</span> : <span class="tp">LaptopDecorator</span>
@@ -1705,9 +1736,13 @@
     {
         <span class="kw">base</span>.<span class="fn">CloseLid</span>();
         Debug.WriteLine(<span class="str">"Dell Laptop is sleeping"</span>);
-    }  <span class="cm">// ← Davranış EKLİYOR</span>
-}
-<span class="cm">// ✅ virtual → override → base. Decorator pattern.</span></pre></div>
+    }
+    <span class="kw">public override void</span> <span class="fn">OpenLid</span>()
+    {
+        Console.WriteLine(<span class="str">"Dell Laptop is waking up"</span>);
+        <span class="kw">base</span>.<span class="fn">OpenLid</span>();
+    }
+}</pre></div>
         </div>
     </div>
 
