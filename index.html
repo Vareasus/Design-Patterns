@@ -1588,6 +1588,27 @@
             <div class="trick-desc">Singleton = one president. Everyone refers to the same person. You don't elect a new one each time.</div>
         </div>
     </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin:1.5rem auto; max-width:1100px;">
+        <div class="red-flags" style="background:rgba(107,203,119,0.06); border-color:rgba(107,203,119,0.15);">
+            <h4 style="color:#6bcb77;">✅ Pros</h4>
+            <ul>
+                <li style="padding:0.4rem 0;">Ensures <strong>single instance</strong> — can be used for memory caching</li>
+                <li style="padding:0.4rem 0;"><strong>Globally accessible</strong> — any class can reach it without passing references</li>
+                <li style="padding:0.4rem 0;"><strong>Lazy creation</strong> — created only when first requested, not at startup</li>
+                <li style="padding:0.4rem 0;"><strong>Thread-safe</strong> (with Lazy&lt;T&gt;) — safe for concurrent access</li>
+            </ul>
+        </div>
+        <div class="red-flags">
+            <h4>❌ Cons</h4>
+            <ul>
+                <li style="padding:0.4rem 0;"><strong>Difficult to Unit Test</strong> — hard to mock, creates hidden dependencies</li>
+                <li style="padding:0.4rem 0;">In <strong>multithread</strong> world, naive implementation lets threads create separate instances</li>
+                <li style="padding:0.4rem 0;">Can become a <strong>God Object</strong> — if overused, one class controls everything</li>
+                <li style="padding:0.4rem 0;">Violates <strong>SRP</strong> — manages its own lifecycle AND business logic</li>
+            </ul>
+        </div>
+    </div>
 </section>
 
 <div class="divider"></div>
