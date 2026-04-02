@@ -1151,23 +1151,47 @@
         <div class="code-block good">
             <div class="code-header">✅ GOOD — Swappable strategies</div>
             <div class="code-content"><pre><span class="kw">interface</span> <span class="tp">ICombatStrategy</span>
-{  <span class="kw">void</span> <span class="fn">Attack</span>(); }
+{
+    <span class="kw">void</span> <span class="fn">Attack</span>();
+}
 
 <span class="kw">class</span> <span class="tp">AgressiveCombatStrategy</span> : <span class="tp">ICombatStrategy</span>
-{  <span class="kw">public void</span> <span class="fn">Attack</span>() =&gt; Console.WriteLine(<span class="str">"Agressive Attack"</span>); }
+{
+    <span class="kw">public void</span> <span class="fn">Attack</span>()
+    {
+        Console.WriteLine(<span class="str">"Agressive Attack"</span>);
+    }
+}
 
 <span class="kw">class</span> <span class="tp">DefensiveCombatStrategy</span> : <span class="tp">ICombatStrategy</span>
-{  <span class="kw">public void</span> <span class="fn">Attack</span>() =&gt; Console.WriteLine(<span class="str">"Defensive Attack"</span>); }
+{
+    <span class="kw">public void</span> <span class="fn">Attack</span>()
+    {
+        Console.WriteLine(<span class="str">"Defensive Attack"</span>);
+    }
+}
 
 <span class="kw">class</span> <span class="tp">Character</span>
 {
     <span class="kw">private</span> <span class="tp">ICombatStrategy</span> combatStrategy;
-    <span class="kw">public void</span> <span class="fn">SetCombatStrategy</span>(<span class="tp">ICombatStrategy</span> s)
-        =&gt; combatStrategy = s;
-    <span class="kw">public void</span> <span class="fn">ApplyAttackStrategy</span>()
-        =&gt; combatStrategy.<span class="fn">Attack</span>();
-}
-<span class="cm">// ✅ Runtime'da strateji değişir. Character değişmez.</span></pre></div>
+
+    <span class="kw">public</span> <span class="fn">Character</span>(<span class="tp">ICombatStrategy</span> combatStrategy)
+    {
+        <span class="kw">this</span>.combatStrategy = combatStrategy;
+    }
+
+    <span class="kw">public</span> <span class="fn">Character</span>() { }
+
+    <span class="kw">public void</span> <span class="fn">SetCombatStrategy</span>(<span class="tp">ICombatStrategy</span> combatStrategy)
+    {
+        <span class="kw">this</span>.combatStrategy = combatStrategy;
+    }
+
+    <span class="kw">public void</span> <span class="fn">ApplyAttactStrategy</span>()
+    {
+        combatStrategy.<span class="fn">Attack</span>();
+    }
+}</pre></div>
         </div>
     </div>
 
@@ -1269,22 +1293,55 @@
         </div>
         <div class="code-block good">
             <div class="code-header">✅ GOOD — Subscribe/unsubscribe</div>
-            <div class="code-content"><pre><span class="kw">interface</span> <span class="tp">IObserver</span>
-{  <span class="tp">string</span> FullName { <span class="kw">get; set</span>; }
-   <span class="kw">void</span> <span class="fn">Notify</span>(<span class="tp">Product</span> product); }
-
-<span class="kw">class</span> <span class="tp">Amazon</span> <span class="cm">// Subject</span>
+            <div class="code-content"><pre><span class="kw">class</span> <span class="tp">Amazon</span>
 {
-    Dictionary&lt;<span class="tp">IObserver</span>, <span class="tp">Product</span>&gt; observers = <span class="kw">new</span>();
-    <span class="kw">public void</span> <span class="fn">Register</span>(<span class="tp">IObserver</span> o, <span class="tp">Product</span> p)
-        =&gt; observers.TryAdd(o, p);
-    <span class="kw">public void</span> <span class="fn">NotifyAll</span>() =&gt;
-        observers.ForEach(kv =&gt; kv.Key.<span class="fn">Notify</span>(kv.Value));
+    <span class="kw">private</span> Dictionary&lt;<span class="tp">IObserver</span>, <span class="tp">Product</span>&gt; observers = <span class="kw">new</span>();
+
+    <span class="kw">public void</span> <span class="fn">Register</span>(<span class="tp">IObserver</span> observer, <span class="tp">Product</span> product)
+    {
+        observers.TryAdd(observer, product);
+    }
+
+    <span class="kw">public void</span> <span class="fn">UnRegister</span>(<span class="tp">IObserver</span> observer)
+    {
+        observers.Remove(observer);
+    }
+
+    <span class="kw">public void</span> <span class="fn">NotifyAll</span>()
+    {
+        <span class="kw">foreach</span> (<span class="kw">var</span> kv <span class="kw">in</span> observers)
+        {
+            kv.Key.<span class="fn">Notify</span>(kv.Value);
+        }
+    }
 }
 
-<span class="kw">class</span> <span class="tp">SalihObserver</span> : <span class="tp">IObserver</span> { <span class="cm">/* Notify → Console */</span> }
-<span class="cm">// amazon.Register(salihObserver, samsung);</span>
-<span class="cm">// ✅ Yeni observer? Yeni class yaz, Register et.</span></pre></div>
+<span class="kw">interface</span> <span class="tp">IObserver</span>
+{
+    <span class="tp">string</span> FullName { <span class="kw">get; set</span>; }
+    <span class="kw">void</span> <span class="fn">Notify</span>(<span class="tp">Product</span> product);
+}
+
+<span class="kw">class</span> <span class="tp">SalihObserver</span> : <span class="tp">IObserver</span>
+{
+    <span class="kw">public</span> <span class="tp">string</span> FullName { <span class="kw">get; set</span>; }
+
+    <span class="kw">public</span> <span class="fn">SalihObserver</span>(<span class="tp">string</span> fullName)
+    {
+        FullName = fullName ?? <span class="kw">throw new</span> <span class="tp">ArgumentNullException</span>(<span class="kw">nameof</span>(fullName));
+    }
+
+    <span class="kw">public void</span> <span class="fn">Notify</span>(<span class="tp">Product</span> product)
+    {
+        Console.WriteLine(<span class="str">$"{FullName}, Product {product.Name} in stock now!"</span>);
+    }
+}
+
+<span class="kw">class</span> <span class="tp">Product</span>
+{
+    <span class="kw">public</span> <span class="tp">string</span> Name { <span class="kw">get; set</span>; }
+    <span class="kw">public</span> <span class="tp">decimal</span> Price { <span class="kw">get; set</span>; }
+}</pre></div>
         </div>
     </div>
 
@@ -1388,25 +1445,65 @@
         <div class="code-block good">
             <div class="code-header">✅ GOOD — Factory creates through abstraction</div>
             <div class="code-content"><pre><span class="kw">interface</span> <span class="tp">IPizza</span>
-{  <span class="kw">void</span> <span class="fn">Prepare</span>(); <span class="kw">void</span> <span class="fn">Bake</span>(); <span class="kw">void</span> <span class="fn">Cut</span>(); }
+{
+    <span class="kw">void</span> <span class="fn">Prepare</span>();
+    <span class="kw">void</span> <span class="fn">Bake</span>();
+    <span class="kw">void</span> <span class="fn">Cut</span>();
+}
 
-<span class="kw">class</span> <span class="tp">CheesePizza</span> : <span class="tp">IPizza</span> { <span class="cm">/*...*/</span> }
-<span class="kw">class</span> <span class="tp">VeggiePizza</span> : <span class="tp">IPizza</span> { <span class="cm">/*...*/</span> }
+<span class="kw">class</span> <span class="tp">CheesePizza</span> : <span class="tp">IPizza</span>
+{
+    <span class="kw">public void</span> <span class="fn">Prepare</span>() { Console.WriteLine(<span class="str">"Cheese Pizza Prepared"</span>); }
+    <span class="kw">public void</span> <span class="fn">Bake</span>() { Console.WriteLine(<span class="str">"Cheese Pizza Baked"</span>); }
+    <span class="kw">public void</span> <span class="fn">Cut</span>() { Console.WriteLine(<span class="str">"Cheese Pizza Cut"</span>); }
+}
+
+<span class="kw">class</span> <span class="tp">VeggiePizza</span> : <span class="tp">IPizza</span>
+{
+    <span class="kw">public void</span> <span class="fn">Prepare</span>() { Console.WriteLine(<span class="str">"Veggie Pizza Prepared"</span>); }
+    <span class="kw">public void</span> <span class="fn">Bake</span>() { Console.WriteLine(<span class="str">"Veggie Pizza Baked"</span>); }
+    <span class="kw">public void</span> <span class="fn">Cut</span>() { Console.WriteLine(<span class="str">"Veggie Pizza Cut"</span>); }
+}
 
 <span class="kw">abstract class</span> <span class="tp">PizzaStore</span>
 {
     <span class="kw">protected abstract</span> <span class="tp">IPizza</span> <span class="fn">CreatePizza</span>(<span class="tp">string</span> type);
-    <span class="kw">public</span> <span class="tp">IPizza</span> <span class="fn">OrderPizza</span>(<span class="tp">string</span> type) {
+
+    <span class="kw">public</span> <span class="tp">IPizza</span> <span class="fn">OrderPizza</span>(<span class="tp">string</span> type)
+    {
         <span class="tp">IPizza</span> pizza = <span class="fn">CreatePizza</span>(type);
-        pizza.<span class="fn">Prepare</span>(); pizza.<span class="fn">Bake</span>(); pizza.<span class="fn">Cut</span>();
-        <span class="kw">return</span> pizza; }
+        pizza.<span class="fn">Prepare</span>();
+        pizza.<span class="fn">Bake</span>();
+        pizza.<span class="fn">Cut</span>();
+        <span class="kw">return</span> pizza;
+    }
 }
 
-<span class="kw">class</span> <span class="tp">AnkaraPizzaStore</span> : <span class="tp">PizzaStore</span> {
+<span class="kw">class</span> <span class="tp">AnkaraPizzaStore</span> : <span class="tp">PizzaStore</span>
+{
     <span class="kw">protected override</span> <span class="tp">IPizza</span> <span class="fn">CreatePizza</span>(<span class="tp">string</span> type)
-        =&gt; type <span class="kw">switch</span> { <span class="str">"cheese"</span> =&gt; <span class="kw">new</span> <span class="tp">CheesePizza</span>(), _ =&gt; ... };
+    {
+        <span class="kw">return</span> type <span class="kw">switch</span>
+        {
+            <span class="str">"cheese"</span> =&gt; <span class="kw">new</span> <span class="tp">CheesePizza</span>(),
+            <span class="str">"veggie"</span> =&gt; <span class="kw">new</span> <span class="tp">VeggiePizza</span>(),
+            _ =&gt; <span class="kw">throw new</span> <span class="tp">ArgumentException</span>(<span class="str">"Invalid pizza type"</span>)
+        };
+    }
 }
-<span class="cm">// ✅ Yeni pizza? Yeni class. Yeni şehir? Yeni store.</span></pre></div>
+
+<span class="kw">class</span> <span class="tp">IstanbulPizzaStore</span> : <span class="tp">PizzaStore</span>
+{
+    <span class="kw">protected override</span> <span class="tp">IPizza</span> <span class="fn">CreatePizza</span>(<span class="tp">string</span> type)
+    {
+        <span class="kw">return</span> type <span class="kw">switch</span>
+        {
+            <span class="str">"cheese"</span> =&gt; <span class="kw">new</span> <span class="tp">CheesePizza</span>(),
+            <span class="str">"veggie"</span> =&gt; <span class="kw">new</span> <span class="tp">VeggiePizza</span>(),
+            _ =&gt; <span class="kw">throw new</span> <span class="tp">ArgumentException</span>(<span class="str">"Invalid pizza type"</span>)
+        };
+    }
+}</pre></div>
         </div>
     </div>
 
