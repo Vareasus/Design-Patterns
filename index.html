@@ -459,9 +459,76 @@
         /* ═══ FOOTER ═══ */
         .footer {
             text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-muted);
+            padding: 5rem 2rem 3rem;
+            color: var(--text-secondary);
             border-top: 1px solid var(--border);
+            background: linear-gradient(180deg, transparent, rgba(10, 10, 15, 0.8));
+        }
+
+        .footer-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-role {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .footer-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-s), var(--accent-o), var(--accent-l), var(--accent-i), var(--accent-d));
+            margin: 0 auto 2rem;
+            border-radius: 2px;
+        }
+
+        .footer-quote {
+            font-style: italic;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto 1rem;
+        }
+
+        .footer-copy {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0.6;
         }
 
         .footer a { color: var(--accent-i); text-decoration: none; }
@@ -946,8 +1013,15 @@
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <footer class="footer">
-    <p>Made with ❤️ by <a href="https://github.com/Vareasus" target="_blank">Vareasus</a></p>
-    <p style="margin-top: 0.5rem; font-size: 0.85rem;">"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Martin Fowler</p>
+    <div class="footer-divider"></div>
+    <p class="footer-brand">Anıl Ceylan</p>
+    <p class="footer-role">Software Engineer</p>
+    <div class="footer-links">
+        <a href="https://github.com/Vareasus" target="_blank" class="footer-link">⚡ GitHub</a>
+        <a href="https://github.com/Vareasus/Design-Patterns" target="_blank" class="footer-link">📂 Source Code</a>
+    </div>
+    <p class="footer-quote">"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Martin Fowler</p>
+    <p class="footer-copy">© 2026 Anıl Ceylan. All rights reserved.</p>
 </footer>
 
 <script>

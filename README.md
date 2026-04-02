@@ -683,8 +683,16 @@ Design-Patterns/
 
 If this helped you nail that interview, give it a ⭐ and share it with someone who's struggling with SOLID.
 
-**Made with ❤️ by [Vareasus](https://github.com/Vareasus)**
-
 ---
 
+<div align="center">
+
+**Anıl Ceylan** · Software Engineer
+
+[![GitHub](https://img.shields.io/badge/GitHub-Vareasus-181717?style=flat-square&logo=github)](https://github.com/Vareasus)
+
 *"Any fool can write code that a computer can understand. Good programmers write code that humans can understand."* — Martin Fowler
+
+© 2026 Anıl Ceylan. All rights reserved.
+
+</div>
