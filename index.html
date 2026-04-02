@@ -1186,43 +1186,75 @@
             <div class="code-header">❌ BAD — Not thread-safe</div>
             <div class="code-content"><pre><span class="kw">public class</span> <span class="tp">Database</span>
 {
-    <span class="kw">static</span> <span class="tp">Database</span> _instance;
+    <span class="kw">private static</span> <span class="tp">Database</span> _instance;
+    <span class="kw">private</span> <span class="fn">Database</span>() { } <span class="cm">// Private constructor</span>
 
     <span class="kw">public static</span> <span class="tp">Database</span> Instance
     {
         <span class="kw">get</span>
         {
-            <span class="cm">// 💥 Two threads check null simultaneously</span>
+            <span class="cm">// 💥 Race condition!</span>
+            <span class="cm">// Thread A: checks null → true</span>
+            <span class="cm">// Thread B: checks null → true (before A creates)</span>
+            <span class="cm">// Both threads create separate instances!</span>
             <span class="kw">if</span> (_instance == <span class="kw">null</span>)
                 _instance = <span class="kw">new</span> <span class="tp">Database</span>();
             <span class="kw">return</span> _instance;
         }
     }
-}
-<span class="cm">// 💥 Not thread-safe. Not testable.</span></pre></div>
-        </div>
-        <div class="code-block good">
-            <div class="code-header">✅ GOOD — Thread-safe + DI-friendly</div>
-            <div class="code-content"><pre><span class="cm">// Option 1: Lazy&lt;T&gt; (thread-safe)</span>
-<span class="kw">public sealed class</span> <span class="tp">AppConfig</span>
-{
-    <span class="kw">static readonly</span> Lazy&lt;<span class="tp">AppConfig</span>&gt; _inst
-       = <span class="kw">new</span>(() => <span class="kw">new</span> <span class="tp">AppConfig</span>());
-    <span class="kw">public static</span> <span class="tp">AppConfig</span> Instance
-       => _inst.Value;
+
+    <span class="kw">public void</span> <span class="fn">Query</span>(<span class="tp">string</span> sql)
+        => Console.<span class="fn">WriteLine</span>(<span class="str">$"Executing: {sql}"</span>);
 }
 
-<span class="cm">// Option 2: DI Container (preferred)</span>
+<span class="cm">// 💥 Problems:</span>
+<span class="cm">// 1. Not thread-safe (race condition)</span>
+<span class="cm">// 2. Can't mock for unit tests</span>
+<span class="cm">// 3. Hidden dependency — hard to track</span>
+<span class="cm">// 4. Global state — can cause side effects</span></pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — 3 Safe Approaches</div>
+            <div class="code-content"><pre><span class="cm">// ── Approach 1: Lazy&lt;T&gt; (Thread-safe) ──</span>
+<span class="kw">public sealed class</span> <span class="tp">AppConfig</span>
+{
+    <span class="kw">private static readonly</span> Lazy&lt;<span class="tp">AppConfig</span>&gt; _inst
+        = <span class="kw">new</span>(() => <span class="kw">new</span> <span class="tp">AppConfig</span>());
+
+    <span class="kw">public static</span> <span class="tp">AppConfig</span> Instance => _inst.Value;
+    <span class="kw">private</span> <span class="fn">AppConfig</span>() { } <span class="cm">// Private ctor</span>
+
+    <span class="kw">public</span> <span class="tp">string</span> AppName { <span class="kw">get</span>; } = <span class="str">"MyApp"</span>;
+    <span class="kw">public</span> <span class="tp">string</span> Env { <span class="kw">get</span>; } = <span class="str">"Production"</span>;
+}
+
+<span class="cm">// ── Approach 2: Static (Eager Loading) ──</span>
+<span class="kw">public sealed class</span> <span class="tp">Logger</span>
+{
+    <span class="kw">private static readonly</span> <span class="tp">Logger</span> _inst = <span class="kw">new</span>();
+    <span class="kw">public static</span> <span class="tp">Logger</span> Instance => _inst;
+    <span class="kw">private</span> <span class="fn">Logger</span>() { }
+}
+
+<span class="cm">// ── Approach 3: DI Container (BEST) ──</span>
 <span class="cm">// builder.Services</span>
 <span class="cm">//   .AddSingleton&lt;ILogService, LogService&gt;();</span>
-<span class="cm">// ✅ Thread-safe. Testable. Mockable.</span></pre></div>
+<span class="cm">// ✅ Thread-safe + Testable + Mockable</span></pre></div>
         </div>
     </div>
 
     <div class="key-points">
-        <div class="key-point"><span class="emoji">⚠️</span><h4>Use Sparingly</h4><p>Most controversial pattern. Can become a God Object if overused.</p></div>
-        <div class="key-point"><span class="emoji">✅</span><h4>Good For</h4><p>Configuration, logging, connection pools, caches.</p></div>
-        <div class="key-point"><span class="emoji">💉</span><h4>Prefer DI</h4><p>Register as singleton in DI container for testability.</p></div>
+        <div class="key-point"><span class="emoji">🔒</span><h4>Thread Safety</h4><p><code>Lazy&lt;T&gt;</code> guarantees only ONE instance, even with 100 threads hitting it simultaneously.</p></div>
+        <div class="key-point"><span class="emoji">⚠️</span><h4>Use Sparingly</h4><p>Most controversial pattern. Can become a God Object. Creates hidden dependencies. Hurts testability.</p></div>
+        <div class="key-point"><span class="emoji">✅</span><h4>Good For</h4><p>Configuration, logging, connection pools, caches — shared resources that are expensive to create.</p></div>
+        <div class="key-point"><span class="emoji">❌</span><h4>Bad For</h4><p>Business logic, services, repositories — anything that should be mockable in unit tests.</p></div>
+        <div class="key-point"><span class="emoji">💉</span><h4>Modern Approach</h4><p>Use DI container's <code>AddSingleton&lt;T&gt;()</code> — same single instance, but injectable and testable.</p></div>
+        <div class="key-point"><span class="emoji">🔑</span><h4>Key Elements</h4><p>Private constructor + static instance + sealed class + thread-safe access.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"Singleton ensures only one instance of a class exists application-wide. I use it for shared resources like configuration or logging. In C#, the safest implementation uses <code>Lazy&lt;T&gt;</code> which guarantees thread safety. However, in modern apps I prefer registering the class as a singleton in the DI container using <code>AddSingleton&lt;T&gt;()</code> — this gives me the same single-instance behavior but with full testability since I can inject mocks. The classic Singleton creates hidden dependencies and global state, so I treat it as a last resort, not a go-to."</p>
     </div>
 </section>
 
