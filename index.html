@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive SOLID Principles Guide — Learn S.O.L.I.D with visual examples, animations, and code comparisons. The only guide you'll ever need.">
+    <title>SOLID Principles — Interactive Visual Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #1f1f35;
+            --text-primary: #e8e8f0;
+            --text-secondary: #9898b0;
+            --text-muted: #6868880;
+            --accent-s: #ff6b6b;
+            --accent-s-glow: rgba(255, 107, 107, 0.3);
+            --accent-o: #ffd93d;
+            --accent-o-glow: rgba(255, 217, 61, 0.3);
+            --accent-l: #6bcb77;
+            --accent-l-glow: rgba(107, 203, 119, 0.3);
+            --accent-i: #4d96ff;
+            --accent-i-glow: rgba(77, 150, 255, 0.3);
+            --accent-d: #c084fc;
+            --accent-d-glow: rgba(192, 132, 252, 0.3);
+            --bad-bg: rgba(255, 50, 50, 0.08);
+            --bad-border: rgba(255, 50, 50, 0.3);
+            --good-bg: rgba(50, 255, 100, 0.08);
+            --good-border: rgba(50, 255, 100, 0.3);
+            --border: rgba(255, 255, 255, 0.06);
+            --code-bg: #0d0d15;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ═══ SCROLLBAR ═══ */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* ═══ HERO SECTION ═══ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, var(--accent-s-glow) 0%, transparent 40%),
+                radial-gradient(circle at 80% 50%, var(--accent-d-glow) 0%, transparent 40%),
+                radial-gradient(circle at 50% 20%, var(--accent-o-glow) 0%, transparent 40%);
+            animation: heroGlow 15s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+
+        @keyframes heroGlow {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.1); }
+            100% { transform: rotate(-5deg) scale(1); }
+        }
+
+        .hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -3px;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .solid-letter {
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .solid-letter:hover { transform: translateY(-8px) scale(1.1); }
+
+        .letter-s { color: var(--accent-s); text-shadow: 0 0 30px var(--accent-s-glow); }
+        .letter-o { color: var(--accent-o); text-shadow: 0 0 30px var(--accent-o-glow); }
+        .letter-l { color: var(--accent-l); text-shadow: 0 0 30px var(--accent-l-glow); }
+        .letter-i { color: var(--accent-i); text-shadow: 0 0 30px var(--accent-i-glow); }
+        .letter-d { color: var(--accent-d); text-shadow: 0 0 30px var(--accent-d-glow); }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            background: linear-gradient(135deg, var(--accent-i), var(--accent-d));
+            color: white;
+            font-weight: 600;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 25px rgba(77, 150, 255, 0.3);
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(77, 150, 255, 0.5);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            z-index: 1;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-12px); }
+            60% { transform: translateX(-50%) translateY(-6px); }
+        }
+
+        /* ═══ NAVIGATION ═══ */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 18px 24px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+        .nav-item.active { border-bottom-color: currentColor; color: var(--text-primary); }
+        .nav-item[data-principle="s"] { --nav-color: var(--accent-s); }
+        .nav-item[data-principle="o"] { --nav-color: var(--accent-o); }
+        .nav-item[data-principle="l"] { --nav-color: var(--accent-l); }
+        .nav-item[data-principle="i"] { --nav-color: var(--accent-i); }
+        .nav-item[data-principle="d"] { --nav-color: var(--accent-d); }
+        .nav-item.active { color: var(--nav-color); border-bottom-color: var(--nav-color); }
+
+        /* ═══ SECTIONS ═══ */
+        .section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-letter {
+            font-size: 5rem;
+            font-weight: 900;
+            display: block;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-quote {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            border-left: 3px solid;
+            text-align: left;
+            background: rgba(255,255,255,0.02);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        .section-quote cite {
+            display: block;
+            margin-top: 0.5rem;
+            font-style: normal;
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        /* ═══ ANALOGY CARD ═══ */
+        .analogy {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analogy::before {
+            content: '💡';
+            font-size: 2rem;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .analogy h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .analogy p { color: var(--text-secondary); font-size: 1.05rem; }
+
+        /* ═══ CODE COMPARISON ═══ */
+        .code-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .code-comparison { grid-template-columns: 1fr; }
+        }
+
+        .code-block {
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid;
+        }
+
+        .code-block.bad { border-color: var(--bad-border); }
+        .code-block.good { border-color: var(--good-border); }
+
+        .code-header {
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-block.bad .code-header {
+            background: var(--bad-bg);
+            color: #ff6b6b;
+        }
+
+        .code-block.good .code-header {
+            background: var(--good-bg);
+            color: #6bcb77;
+        }
+
+        .code-content {
+            padding: 1.5rem;
+            background: var(--code-bg);
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.8;
+            color: #c9d1d9;
+        }
+
+        .code-content pre { margin: 0; white-space: pre; }
+
+        /* Syntax colors */
+        .kw { color: #ff79c6; }
+        .tp { color: #8be9fd; }
+        .str { color: #f1fa8c; }
+        .cm { color: #6272a4; font-style: italic; }
+        .fn { color: #50fa7b; }
+        .num { color: #bd93f9; }
+        .op { color: #ff79c6; }
+
+        /* ═══ KEY POINTS ═══ */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
+            margin: 2.5rem 0;
+        }
+
+        .key-point {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .key-point:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .key-point .emoji { font-size: 1.5rem; margin-bottom: 0.8rem; display: block; }
+        .key-point h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+        .key-point p { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* ═══ INTERVIEW BOX ═══ */
+        .interview-box {
+            background: linear-gradient(135deg, rgba(77, 150, 255, 0.08), rgba(192, 132, 252, 0.08));
+            border: 1px solid rgba(77, 150, 255, 0.2);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+        }
+
+        .interview-box h3 {
+            color: var(--accent-i);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .interview-box p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* ═══ DIVIDER ═══ */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 1rem 0;
+        }
+
+        /* ═══ CHEAT SHEET ═══ */
+        .cheat-sheet {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .cheat-sheet h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .cheat-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .cheat-table th {
+            background: var(--bg-card);
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .cheat-table td {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .cheat-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .cheat-table .letter-cell {
+            font-weight: 800;
+            font-size: 1.3rem;
+            width: 60px;
+            text-align: center;
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer a { color: var(--accent-i); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        /* ═══ ANIMATIONS ═══ */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 3rem; letter-spacing: -1px; }
+            .section { padding: 3rem 1rem; }
+            .nav-item { font-size: 0.8rem; padding: 14px 12px; }
+            .analogy { padding: 1.5rem; }
+            .code-content { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero" id="top">
+    <div class="hero-content">
+        <div class="hero-badge">🏗️ Design Principles Guide</div>
+        <h1>
+            <span class="solid-letter letter-s">S</span><span class="solid-letter letter-o">O</span><span class="solid-letter letter-l">L</span><span class="solid-letter letter-i">I</span><span class="solid-letter letter-d">D</span>
+        </h1>
+        <p class="hero-subtitle">The only guide you'll ever need. Five principles that separate spaghetti code from software that survives.</p>
+        <a href="#srp" class="hero-cta">Start Learning ↓</a>
+    </div>
+    <div class="scroll-indicator">↓</div>
+</section>
+
+<!-- ═══════════ NAVIGATION ═══════════ -->
+<nav class="nav" id="navbar">
+    <div class="nav-inner">
+        <a href="#srp" class="nav-item" data-principle="s">S — Single Responsibility</a>
+        <a href="#ocp" class="nav-item" data-principle="o">O — Open/Closed</a>
+        <a href="#lsp" class="nav-item" data-principle="l">L — Liskov Substitution</a>
+        <a href="#isp" class="nav-item" data-principle="i">I — Interface Segregation</a>
+        <a href="#dip" class="nav-item" data-principle="d">D — Dependency Inversion</a>
+    </div>
+</nav>
+
+<!-- ═══════════ S — SRP ═══════════ -->
+<section class="section fade-in" id="srp">
+    <div class="section-header">
+        <span class="section-letter letter-s">S</span>
+        <h2 class="section-title">Single Responsibility Principle</h2>
+        <div class="section-quote" style="border-color: var(--accent-s);">
+            "A class should have one, and only one, reason to change."
+            <cite>— Robert C. Martin</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🍕 The Pizza Restaurant Analogy</h3>
+        <p>In a pizzeria, the <strong>chef</strong> makes pizzas, the <strong>cashier</strong> handles payments, and the <strong>delivery driver</strong> delivers orders. If one person did all three, when the menu changes, the tax laws change, OR delivery routes change — the same person needs retraining. <strong>Each role change affects the same person.</strong> That's an SRP violation. Each role should be separate.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Three responsibilities in one class</div>
+            <div class="code-content"><pre><span class="cm">// This class has THREE reasons to change</span>
+<span class="kw">public class</span> <span class="tp">Invoice</span>
+{
+    <span class="kw">public</span> <span class="tp">decimal</span> Amount { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="tp">string</span> Customer { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="cm">// Reason 1: Calculation logic</span>
+    <span class="kw">public</span> <span class="tp">decimal</span> <span class="fn">CalculateTotal</span>(<span class="tp">decimal</span> tax)
+        => Amount + (Amount * tax);
+
+    <span class="cm">// Reason 2: Display/Print format</span>
+    <span class="kw">public</span> <span class="tp">string</span> <span class="fn">PrintInvoice</span>()
+        => <span class="str">$"Invoice: {Customer} — ${Amount}"</span>;
+
+    <span class="cm">// Reason 3: Database persistence</span>
+    <span class="kw">public void</span> <span class="fn">SaveToDatabase</span>()
+    {
+        <span class="cm">// Direct SQL connection inside model 💥</span>
+        <span class="kw">var</span> conn = <span class="kw">new</span> <span class="tp">SqlConnection</span>(<span class="str">"..."</span>);
+    }
+}</pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — One responsibility per class</div>
+            <div class="code-content"><pre><span class="cm">// Data only</span>
+<span class="kw">public class</span> <span class="tp">Invoice</span>
+{
+    <span class="kw">public</span> <span class="tp">decimal</span> Amount { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="tp">string</span> Customer { <span class="kw">get</span>; <span class="kw">set</span>; }
+}
+
+<span class="cm">// Calculation only</span>
+<span class="kw">public class</span> <span class="tp">InvoiceCalculator</span>
+{
+    <span class="kw">public</span> <span class="tp">decimal</span> <span class="fn">CalculateTotal</span>(<span class="tp">Invoice</span> inv, <span class="tp">decimal</span> tax)
+        => inv.Amount + (inv.Amount * tax);
+}
+
+<span class="cm">// Printing only</span>
+<span class="kw">public class</span> <span class="tp">InvoicePrinter</span> { <span class="cm">/* ... */</span> }
+
+<span class="cm">// Persistence only</span>
+<span class="kw">public class</span> <span class="tp">InvoiceRepository</span> { <span class="cm">/* ... */</span> }</pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">🎯</span><h4>One Reason to Change</h4><p>Not "one thing to do." A class should be responsible to ONE actor/stakeholder.</p></div>
+        <div class="key-point"><span class="emoji">🔍</span><h4>Red Flag: "And"</h4><p>If a class name needs "and" to describe it — it does too much.</p></div>
+        <div class="key-point"><span class="emoji">🧪</span><h4>Easy to Test</h4><p>Focused classes are trivially testable. God classes need the whole universe to test.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"SRP states that a class should have only one reason to change, meaning it should be responsible to only one actor. For example, an Invoice class that calculates totals, prints reports, AND saves to database violates SRP. Instead, I separate those into InvoiceCalculator, InvoicePrinter, and InvoiceRepository — each with a single, focused responsibility. This makes the code testable, maintainable, and reduces merge conflicts."</p>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ O — OCP ═══════════ -->
+<section class="section fade-in" id="ocp">
+    <div class="section-header">
+        <span class="section-letter letter-o">O</span>
+        <h2 class="section-title">Open/Closed Principle</h2>
+        <div class="section-quote" style="border-color: var(--accent-o);">
+            "Software entities should be open for extension, but closed for modification."
+            <cite>— Bertrand Meyer</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🔌 The Power Outlet Analogy</h3>
+        <p>A wall power outlet is <strong>closed for modification</strong> (you don't rewire it for each new device) but <strong>open for extension</strong> (you can plug in ANY device). The outlet doesn't know or care if it's powering a lamp, laptop, or guitar amp — it just provides power through a standard interface.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Growing switch statement</div>
+            <div class="code-content"><pre><span class="kw">public class</span> <span class="tp">AreaCalculator</span>
+{
+    <span class="kw">public</span> <span class="tp">double</span> <span class="fn">Calculate</span>(<span class="tp">object</span> shape)
+    {
+        <span class="kw">if</span> (shape <span class="kw">is</span> <span class="tp">Circle</span> c)
+            <span class="kw">return</span> Math.PI * c.Radius * c.Radius;
+        <span class="kw">else if</span> (shape <span class="kw">is</span> <span class="tp">Rectangle</span> r)
+            <span class="kw">return</span> r.Width * r.Height;
+        <span class="kw">else if</span> (shape <span class="kw">is</span> <span class="tp">Triangle</span> t)
+            <span class="kw">return</span> <span class="num">0.5</span> * t.Base * t.Height;
+        <span class="cm">// Pentagon? Hexagon? Star?</span>
+        <span class="cm">// This grows FOREVER 💥</span>
+        <span class="kw">throw new</span> <span class="tp">ArgumentException</span>(<span class="str">"Unknown"</span>);
+    }
+}</pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Extend without modifying</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IShape</span>
+{
+    <span class="tp">double</span> <span class="fn">CalculateArea</span>();
+}
+
+<span class="kw">public class</span> <span class="tp">Circle</span> : <span class="tp">IShape</span>
+{
+    <span class="kw">public</span> <span class="tp">double</span> <span class="fn">CalculateArea</span>()
+        => Math.PI * Radius * Radius;
+}
+
+<span class="cm">// NEW shape? Just add a class!</span>
+<span class="kw">public class</span> <span class="tp">Pentagon</span> : <span class="tp">IShape</span>
+{
+    <span class="kw">public</span> <span class="tp">double</span> <span class="fn">CalculateArea</span>()
+        => <span class="cm">/* formula */</span>;
+}
+
+<span class="cm">// Calculator NEVER changes ✅</span>
+<span class="kw">public class</span> <span class="tp">AreaCalculator</span>
+{
+    <span class="kw">public</span> <span class="tp">double</span> <span class="fn">Total</span>(IEnumerable&lt;<span class="tp">IShape</span>&gt; s)
+        => s.<span class="fn">Sum</span>(x => x.<span class="fn">CalculateArea</span>());
+}</pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">🔧</span><h4>Extend, Don't Modify</h4><p>Add new classes instead of editing existing ones. Working code stays untouched.</p></div>
+        <div class="key-point"><span class="emoji">🔌</span><h4>Interfaces = Extension Points</h4><p>Define an interface, then implement it for each new variant.</p></div>
+        <div class="key-point"><span class="emoji">⚠️</span><h4>Switch = Code Smell</h4><p>A growing if-else/switch on types usually means you need polymorphism.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"OCP means we should be able to extend a system's behavior without modifying existing source code. I use abstractions like interfaces as extension points. For example, instead of a giant if-else chain for shape area calculations, each shape implements an IShape interface with CalculateArea(). Adding a Pentagon means creating a new class — the calculator never changes. This reduces risk and makes the system naturally extensible."</p>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ L — LSP ═══════════ -->
+<section class="section fade-in" id="lsp">
+    <div class="section-header">
+        <span class="section-letter letter-l">L</span>
+        <h2 class="section-title">Liskov Substitution Principle</h2>
+        <div class="section-quote" style="border-color: var(--accent-l);">
+            "Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program."
+            <cite>— Barbara Liskov, 1987</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🦆 The Duck Test Gone Wrong</h3>
+        <p>"If it looks like a duck and quacks like a duck..." — but what about a <strong>RubberDuck</strong>? It looks like a duck but can't fly, can't quack (it squeaks), and doesn't swim (it floats). Code expecting a Duck will <strong>break</strong> when it gets a RubberDuck. <strong>Subtypes must honor the full contract of their parent.</strong></p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Square breaks Rectangle's contract</div>
+            <div class="code-content"><pre><span class="kw">public class</span> <span class="tp">Rectangle</span>
+{
+    <span class="kw">public virtual</span> <span class="tp">int</span> Width { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public virtual</span> <span class="tp">int</span> Height { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="tp">int</span> <span class="fn">Area</span>() => Width * Height;
+}
+
+<span class="kw">public class</span> <span class="tp">Square</span> : <span class="tp">Rectangle</span>
+{
+    <span class="kw">public override</span> <span class="tp">int</span> Width {
+        <span class="kw">set</span> { <span class="kw">base</span>.Width = value;
+               <span class="kw">base</span>.Height = value; } <span class="cm">// 💥</span>
+    }
+}
+
+<span class="cm">// rect.Width = 5; rect.Height = 10;</span>
+<span class="cm">// Expected: 50. Got: 100! 💥</span></pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Shared interface, no broken contracts</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IShape</span>
+{
+    <span class="tp">int</span> <span class="fn">CalculateArea</span>();
+}
+
+<span class="kw">public class</span> <span class="tp">Rectangle</span> : <span class="tp">IShape</span>
+{
+    <span class="kw">public</span> <span class="tp">int</span> Width { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="tp">int</span> Height { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="tp">int</span> <span class="fn">CalculateArea</span>()
+        => Width * Height;
+}
+
+<span class="kw">public class</span> <span class="tp">Square</span> : <span class="tp">IShape</span>
+{
+    <span class="kw">public</span> <span class="tp">int</span> Side { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="tp">int</span> <span class="fn">CalculateArea</span>()
+        => Side * Side;
+}
+<span class="cm">// Both work through IShape ✅</span></pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">📝</span><h4>Honor the Contract</h4><p>Subtypes must fulfill ALL promises of the parent — behavior, not just signatures.</p></div>
+        <div class="key-point"><span class="emoji">🚫</span><h4>No Surprise Exceptions</h4><p>If the parent doesn't throw, the child shouldn't throw. NotImplementedException = LSP violation.</p></div>
+        <div class="key-point"><span class="emoji">🔄</span><h4>The Swap Test</h4><p>Can you replace the parent with the child and have ALL tests still pass?</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"LSP says that a subclass must be usable wherever its parent is used without breaking the program. The classic example is Rectangle vs Square — mathematically a square is a rectangle, but in code, Square extending Rectangle causes bugs because setting width independently violates the square's invariant. The fix: use a shared interface like IShape instead of forced inheritance. Key test: can I swap in the subclass and still pass all existing tests?"</p>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ I — ISP ═══════════ -->
+<section class="section fade-in" id="isp">
+    <div class="section-header">
+        <span class="section-letter letter-i">I</span>
+        <h2 class="section-title">Interface Segregation Principle</h2>
+        <div class="section-quote" style="border-color: var(--accent-i);">
+            "No client should be forced to depend on methods it does not use."
+            <cite>— Robert C. Martin</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🍽️ The Restaurant Menu Analogy</h3>
+        <p>A restaurant that hands you a <strong>200-page menu</strong> covering breakfast, lunch, dinner, desserts, catering, and party packages. You came for a <strong>sandwich at noon</strong>. You don't need the party planner section. <strong>ISP says: give the lunch customer a lunch menu.</strong> Small. Focused. Relevant.</p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Fat interface forces robot to eat and sleep</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IWorker</span>
+{
+    <span class="kw">void</span> <span class="fn">Work</span>();
+    <span class="kw">void</span> <span class="fn">Eat</span>();
+    <span class="kw">void</span> <span class="fn">Sleep</span>();
+}
+
+<span class="kw">public class</span> <span class="tp">RobotWorker</span> : <span class="tp">IWorker</span>
+{
+    <span class="kw">public void</span> <span class="fn">Work</span>() { <span class="cm">/* ✅ Sure */</span> }
+
+    <span class="kw">public void</span> <span class="fn">Eat</span>()
+        => <span class="kw">throw new</span> <span class="tp">NotImplementedException</span>();
+        <span class="cm">// 💥 Robots don't eat!</span>
+
+    <span class="kw">public void</span> <span class="fn">Sleep</span>()
+        => <span class="kw">throw new</span> <span class="tp">NotImplementedException</span>();
+        <span class="cm">// 💥 Robots don't sleep!</span>
+}</pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Small interfaces, pick what you need</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IWorkable</span>
+{  <span class="kw">void</span> <span class="fn">Work</span>(); }
+
+<span class="kw">public interface</span> <span class="tp">IFeedable</span>
+{  <span class="kw">void</span> <span class="fn">Eat</span>(); }
+
+<span class="kw">public interface</span> <span class="tp">ISleepable</span>
+{  <span class="kw">void</span> <span class="fn">Sleep</span>(); }
+
+<span class="cm">// Human does all three</span>
+<span class="kw">public class</span> <span class="tp">Human</span> :
+    <span class="tp">IWorkable</span>, <span class="tp">IFeedable</span>, <span class="tp">ISleepable</span>
+{ <span class="cm">/* implements all */</span> }
+
+<span class="cm">// Robot ONLY works — nothing forced!</span>
+<span class="kw">public class</span> <span class="tp">Robot</span> : <span class="tp">IWorkable</span>
+{
+    <span class="kw">public void</span> <span class="fn">Work</span>() { <span class="cm">/* 24/7! */</span> }
+}</pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">✂️</span><h4>Split Fat Interfaces</h4><p>Many small interfaces beat one giant interface. Always.</p></div>
+        <div class="key-point"><span class="emoji">🎯</span><h4>Client-Driven Design</h4><p>Design interfaces based on what CLIENTS need, not what IMPLEMENTORS have.</p></div>
+        <div class="key-point"><span class="emoji">🚩</span><h4>NotImplementedException = Red Flag</h4><p>If you're throwing it, the interface is too fat for this class.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"ISP states that clients shouldn't be forced to depend on interfaces they don't use. Instead of one large IWorker interface with Work, Eat, Sleep, and WriteReport, I split it into IWorkable, IFeedable, ISleepable, and IReportable. A RobotWorker only implements IWorkable — not forced to throw NotImplementedException for Eat. This makes code more maintainable and prevents dead weight."</p>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ D — DIP ═══════════ -->
+<section class="section fade-in" id="dip">
+    <div class="section-header">
+        <span class="section-letter letter-d">D</span>
+        <h2 class="section-title">Dependency Inversion Principle</h2>
+        <div class="section-quote" style="border-color: var(--accent-d);">
+            "High-level modules should not depend on low-level modules. Both should depend on abstractions."
+            <cite>— Robert C. Martin</cite>
+        </div>
+    </div>
+
+    <div class="analogy">
+        <h3>🔌 The Phone Charger Analogy</h3>
+        <p>Your phone doesn't have a wire permanently soldered to a wall outlet. Instead, it depends on a <strong>USB-C port</strong> (abstraction). You can use ANY charger — wall, car, power bank — as long as it speaks USB-C. The phone doesn't know or care WHERE the power comes from. <strong>That's dependency inversion.</strong></p>
+    </div>
+
+    <div class="code-comparison">
+        <div class="code-block bad">
+            <div class="code-header">❌ BAD — Directly coupled to MySQL</div>
+            <div class="code-content"><pre><span class="kw">public class</span> <span class="tp">UserService</span>
+{
+    <span class="cm">// 💥 Tightly coupled to MySQL!</span>
+    <span class="kw">private readonly</span> <span class="tp">MySqlDatabase</span> _db
+        = <span class="kw">new</span> <span class="tp">MySqlDatabase</span>();
+
+    <span class="kw">public void</span> <span class="fn">CreateUser</span>(<span class="tp">string</span> name)
+    {
+        _db.<span class="fn">Save</span>(name);
+        <span class="cm">// Want PostgreSQL? Change THIS class.</span>
+        <span class="cm">// Want to unit test? Need real MySQL.</span>
+        <span class="cm">// 💥 Rigid. Untestable. Fragile.</span>
+    }
+}</pre></div>
+        </div>
+        <div class="code-block good">
+            <div class="code-header">✅ GOOD — Depends on abstraction</div>
+            <div class="code-content"><pre><span class="kw">public interface</span> <span class="tp">IDatabase</span>
+{  <span class="kw">void</span> <span class="fn">Save</span>(<span class="tp">string</span> data); }
+
+<span class="kw">public class</span> <span class="tp">MySql</span> : <span class="tp">IDatabase</span> { <span class="cm">/* ... */</span> }
+<span class="kw">public class</span> <span class="tp">Postgres</span> : <span class="tp">IDatabase</span> { <span class="cm">/* ... */</span> }
+<span class="kw">public class</span> <span class="tp">MongoDB</span> : <span class="tp">IDatabase</span> { <span class="cm">/* ... */</span> }
+
+<span class="kw">public class</span> <span class="tp">UserService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">IDatabase</span> _db;
+
+    <span class="cm">// Inject ANY database!</span>
+    <span class="kw">public</span> <span class="fn">UserService</span>(<span class="tp">IDatabase</span> db)
+    { _db = db; }
+
+    <span class="kw">public void</span> <span class="fn">CreateUser</span>(<span class="tp">string</span> name)
+    { _db.<span class="fn">Save</span>(name); }
+}
+<span class="cm">// ✅ Swap databases in config, not code</span></pre></div>
+        </div>
+    </div>
+
+    <div class="key-points">
+        <div class="key-point"><span class="emoji">⬆️</span><h4>Invert the Direction</h4><p>High-level defines interfaces. Low-level implements them. Dependencies flow toward abstractions.</p></div>
+        <div class="key-point"><span class="emoji">💉</span><h4>DIP ≠ DI</h4><p>DIP is the PRINCIPLE (depend on abstractions). Dependency Injection is a TECHNIQUE to achieve it.</p></div>
+        <div class="key-point"><span class="emoji">🧪</span><h4>Testability Unlocked</h4><p>Inject mocks for tests. No real databases, emails, or APIs needed.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"DIP says high-level business logic shouldn't directly depend on low-level infrastructure. Both depend on abstractions. Instead of UserService creating a MySqlDatabase instance, I define an IDatabase interface. UserService receives IDatabase through its constructor — it doesn't know if it's MySQL, PostgreSQL, or a mock for testing. This makes the system flexible, testable, and easy to evolve without touching business logic."</p>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHEAT SHEET ═══════════ -->
+<section class="cheat-sheet fade-in" id="cheatsheet">
+    <h2>🎯 Interview Cheat Sheet</h2>
+    <table class="cheat-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Principle</th>
+                <th>One-Liner</th>
+                <th>Key Technique</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="letter-cell letter-s">S</td>
+                <td><strong>Single Responsibility</strong></td>
+                <td>A class should have one reason to change</td>
+                <td>Extract classes by actor/stakeholder</td>
+            </tr>
+            <tr>
+                <td class="letter-cell letter-o">O</td>
+                <td><strong>Open/Closed</strong></td>
+                <td>Open for extension, closed for modification</td>
+                <td>Interfaces + polymorphism</td>
+            </tr>
+            <tr>
+                <td class="letter-cell letter-l">L</td>
+                <td><strong>Liskov Substitution</strong></td>
+                <td>Subtypes must be substitutable for base types</td>
+                <td>Honor contracts, prefer composition</td>
+            </tr>
+            <tr>
+                <td class="letter-cell letter-i">I</td>
+                <td><strong>Interface Segregation</strong></td>
+                <td>Don't force clients to depend on unused methods</td>
+                <td>Split fat interfaces into small ones</td>
+            </tr>
+            <tr>
+                <td class="letter-cell letter-d">D</td>
+                <td><strong>Dependency Inversion</strong></td>
+                <td>Depend on abstractions, not concretions</td>
+                <td>Constructor injection via interfaces</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="footer">
+    <p>Made with ❤️ by <a href="https://github.com/Vareasus" target="_blank">Vareasus</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.85rem;">"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Martin Fowler</p>
+</footer>
+
+<script>
+    // ═══ Intersection Observer for fade-in animations ═══
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ═══ Active nav tracking ═══
+    const sections = document.querySelectorAll('.section[id]');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navItems.forEach(item => item.classList.remove('active'));
+                const activeNav = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+                if (activeNav) activeNav.classList.add('active');
+            }
+        });
+    }, { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' });
+
+    sections.forEach(section => navObserver.observe(section));
+
+    // ═══ Smooth scroll ═══
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // ═══ SOLID letter hover effect ═══
+    document.querySelectorAll('.solid-letter').forEach(letter => {
+        letter.addEventListener('mouseenter', () => {
+            letter.style.transform = 'translateY(-8px) scale(1.15) rotate(-3deg)';
+        });
+        letter.addEventListener('mouseleave', () => {
+            letter.style.transform = '';
+        });
+    });
+</script>
+</body>
+</html>
