@@ -1,90 +1,78 @@
-// ✅ GOOD — Factory Method Pattern
-using System;
-using System.Collections.Generic;
+// Factory Method Design Pattern - Creational Category
+// Source: salihcantekin/youtube_DesignPatterns_Builder
 
-namespace Factory.Good
+interface IPizza
 {
-    // Product interface
-    public interface IDocument
+    void Prepare();
+    void Bake();
+    void Cut();
+}
+
+// === Concrete Products ===
+
+class CheesePizza : IPizza
+{
+    public void Prepare() => Console.WriteLine("Cheese Pizza Prepared");
+    public void Bake() => Console.WriteLine("Cheese Pizza Baked");
+    public void Cut() => Console.WriteLine("Cheese Pizza Cut");
+}
+
+class VeggiePizza : IPizza
+{
+    public void Prepare() => Console.WriteLine("Veggie Pizza Prepared");
+    public void Bake() => Console.WriteLine("Veggie Pizza Baked");
+    public void Cut() => Console.WriteLine("Veggie Pizza Cut");
+}
+
+// === Creator (Abstract Factory) ===
+
+abstract class PizzaStore
+{
+    protected abstract IPizza CreatePizza(string type);
+
+    public IPizza OrderPizza(string type)
     {
-        string Type { get; }
-        void Generate();
-        void Save(string path);
-    }
+        IPizza pizza = CreatePizza(type);
 
-    // Concrete products
-    public class PdfDocument : IDocument
-    {
-        public string Type => "PDF";
-        public void Generate() => Console.WriteLine("    📄 PDF document generated with formatting");
-        public void Save(string path) => Console.WriteLine($"    💾 Saved PDF to {path}");
-    }
+        pizza.Prepare();
+        pizza.Bake();
+        pizza.Cut();
 
-    public class WordDocument : IDocument
-    {
-        public string Type => "Word";
-        public void Generate() => Console.WriteLine("    📝 Word document generated with styles");
-        public void Save(string path) => Console.WriteLine($"    💾 Saved DOCX to {path}");
-    }
-
-    public class ExcelDocument : IDocument
-    {
-        public string Type => "Excel";
-        public void Generate() => Console.WriteLine("    📊 Excel spreadsheet generated with formulas");
-        public void Save(string path) => Console.WriteLine($"    💾 Saved XLSX to {path}");
-    }
-
-    // ✨ Added later — zero changes to existing code!
-    public class MarkdownDocument : IDocument
-    {
-        public string Type => "Markdown";
-        public void Generate() => Console.WriteLine("    📋 Markdown document generated");
-        public void Save(string path) => Console.WriteLine($"    💾 Saved MD to {path}");
-    }
-
-    // Factory
-    public static class DocumentFactory
-    {
-        private static readonly Dictionary<string, Func<IDocument>> _creators = new()
-        {
-            ["pdf"] = () => new PdfDocument(),
-            ["word"] = () => new WordDocument(),
-            ["excel"] = () => new ExcelDocument(),
-            ["markdown"] = () => new MarkdownDocument(),
-        };
-
-        public static IDocument Create(string type)
-        {
-            if (_creators.TryGetValue(type.ToLower(), out var creator))
-                return creator();
-            throw new ArgumentException($"Unknown document type: {type}");
-        }
-
-        // Register new types without modifying existing code!
-        public static void Register(string type, Func<IDocument> creator)
-        {
-            _creators[type.ToLower()] = creator;
-        }
-    }
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("📄 Document Factory Demo\n");
-
-            var types = new[] { "pdf", "word", "excel", "markdown" };
-            foreach (var type in types)
-            {
-                Console.WriteLine($"  Creating {type.ToUpper()} document:");
-                var doc = DocumentFactory.Create(type);
-                doc.Generate();
-                doc.Save($"/documents/report.{type}");
-                Console.WriteLine();
-            }
-
-            Console.WriteLine("✨ Client only knows IDocument. Factory handles creation.");
-            Console.WriteLine("✨ New format? Register it. Nothing else changes.");
-        }
+        return pizza;
     }
 }
+
+// === Concrete Creators ===
+
+class AnkaraPizzaStore : PizzaStore
+{
+    protected override IPizza CreatePizza(string type)
+    {
+        return type switch
+        {
+            "cheese" => new CheesePizza(),
+            "veggie" => new VeggiePizza(),
+            _ => throw new ArgumentException("Invalid pizza type", nameof(type))
+        };
+    }
+}
+
+class IstanbulPizzaStore : PizzaStore
+{
+    protected override IPizza CreatePizza(string type)
+    {
+        return type switch
+        {
+            "cheese" => new CheesePizza(),
+            "veggie" => new VeggiePizza(),
+            _ => throw new ArgumentException("Invalid pizza type", nameof(type))
+        };
+    }
+}
+
+// === Usage ===
+// PizzaStore store = new AnkaraPizzaStore();
+// IPizza pizza = store.OrderPizza("cheese");
+//
+// Yeni pizza türü? Yeni class yaz. Yeni şehir? Yeni store yaz.
+// Hiçbir mevcut kod değişmez → OCP

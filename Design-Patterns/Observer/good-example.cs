@@ -1,105 +1,95 @@
-// ✅ GOOD — Observer Pattern: Decoupled event system
-using System;
-using System.Collections.Generic;
+// Observer Design Pattern - Behavioral Category
+// Source: salihcantekin/youtube_DesignPatterns_Builder
 
-namespace Observer.Good
+class Product
 {
-    // Event data
-    public class ProductEvent
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+
+    public Product(string name, decimal price)
     {
-        public string ProductName { get; set; }
-        public decimal Price { get; set; }
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        Name = name;
+        Price = price;
+    }
+}
+
+interface IObserver
+{
+    string FullName { get; set; }
+    void Notify(Product product);
+}
+
+// === Concrete Observers ===
+
+class SalihObserver : IObserver
+{
+    public string FullName { get; set; }
+
+    public SalihObserver(string fullName)
+    {
+        FullName = fullName ?? throw new ArgumentNullException(nameof(fullName));
     }
 
-    // Observer interface
-    public interface IProductObserver
+    public void Notify(Product product)
     {
-        string Name { get; }
-        void OnProductAvailable(ProductEvent e);
+        Console.WriteLine($"{FullName}, Product {product.Name} in stock now!");
+    }
+}
+
+class CantekinObserver : IObserver
+{
+    public string FullName { get; set; }
+
+    public CantekinObserver(string fullName)
+    {
+        FullName = fullName;
     }
 
-    // Subject (Publisher)
-    public class OnlineStore
+    public void Notify(Product product)
     {
-        private readonly List<IProductObserver> _observers = new();
+        Console.WriteLine($"{FullName}, Product {product.Name} in stock now!");
+    }
+}
 
-        public void Subscribe(IProductObserver observer)
+// === Subject (Observable) ===
+
+class Amazon
+{
+    private Dictionary<IObserver, Product> observers = new();
+
+    public void Register(IObserver observer, Product product)
+    {
+        observers.TryAdd(observer, product);
+    }
+
+    public void UnRegister(IObserver observer)
+    {
+        observers.Remove(observer);
+    }
+
+    public void NotifyAll()
+    {
+        foreach (var kv in observers)
         {
-            _observers.Add(observer);
-            Console.WriteLine($"  ✅ {observer.Name} subscribed.");
+            kv.Key.Notify(kv.Value);
         }
+    }
 
-        public void Unsubscribe(IProductObserver observer)
+    public void NotifyForProductName(string productName)
+    {
+        foreach (var kv in observers)
         {
-            _observers.Remove(observer);
-            Console.WriteLine($"  ❌ {observer.Name} unsubscribed.");
-        }
-
-        public void NotifyProductAvailable(string product, decimal price)
-        {
-            Console.WriteLine($"\n  📢 '{product}' is now available at ${price}!");
-            var e = new ProductEvent { ProductName = product, Price = price };
-            foreach (var observer in _observers)
-                observer.OnProductAvailable(e);
-        }
-    }
-
-    // Concrete observers — each independent, each can be added/removed
-    public class EmailNotifier : IProductObserver
-    {
-        public string Name => "Email Notifier";
-        public void OnProductAvailable(ProductEvent e)
-            => Console.WriteLine($"    📧 Email sent: '{e.ProductName}' at ${e.Price}");
-    }
-
-    public class SmsNotifier : IProductObserver
-    {
-        public string Name => "SMS Notifier";
-        public void OnProductAvailable(ProductEvent e)
-            => Console.WriteLine($"    📱 SMS sent: '{e.ProductName}' back in stock!");
-    }
-
-    public class SlackNotifier : IProductObserver
-    {
-        public string Name => "Slack Notifier";
-        public void OnProductAvailable(ProductEvent e)
-            => Console.WriteLine($"    💬 Slack: #{e.ProductName.ToLower().Replace(" ", "-")} is available!");
-    }
-
-    public class AnalyticsTracker : IProductObserver
-    {
-        public string Name => "Analytics Tracker";
-        public void OnProductAvailable(ProductEvent e)
-            => Console.WriteLine($"    📊 Analytics: tracked restock event for '{e.ProductName}'");
-    }
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            var store = new OnlineStore();
-
-            var email = new EmailNotifier();
-            var sms = new SmsNotifier();
-            var slack = new SlackNotifier();
-            var analytics = new AnalyticsTracker();
-
-            // Subscribe
-            store.Subscribe(email);
-            store.Subscribe(sms);
-            store.Subscribe(slack);
-            store.Subscribe(analytics);
-
-            store.NotifyProductAvailable("MacBook Pro M4", 2499.99m);
-
-            // Unsubscribe SMS
-            Console.WriteLine();
-            store.Unsubscribe(sms);
-            store.NotifyProductAvailable("AirPods Pro 3", 249.99m);
-
-            Console.WriteLine("\n✨ Store doesn't know about Email, SMS, Slack details.");
-            Console.WriteLine("✨ Add/remove observers freely. Store never changes.");
+            if (kv.Value.Name == productName)
+                kv.Key.Notify(kv.Value);
         }
     }
 }
+
+// === Usage ===
+// var samsung = new Product("Samsung S23", 1000);
+// var amazon = new Amazon();
+// var salih = new SalihObserver("Salih Cantekin");
+// amazon.Register(salih, samsung);
+// amazon.NotifyAll();
+//
+// Yeni observer eklemek? Yeni class yaz, Register et. Amazon class'ı değişmez.

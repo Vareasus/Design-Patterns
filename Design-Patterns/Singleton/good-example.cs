@@ -1,79 +1,51 @@
-// ✅ GOOD — Thread-safe Singleton + DI-friendly approach
-using System;
+// Singleton Design Pattern - Creational Category
+// Source: salihcantekin/youtube_DesignPatterns_Builder
 
-namespace Singleton.Good
+/* *** Pros ***
+    - Ensure single instance (can be use for memory caching)
+    - Globally Access
+    - Created only when requested
+*/
+
+/* *** Cons ***
+    - Difficult to UnitTest (mocking)
+    - In multithread word, threads cannot create its own instance
+*/
+
+public class CountryProvider
 {
-    // Approach 1: Thread-safe with Lazy<T>
-    public sealed class AppConfiguration
+    private static CountryProvider instance = null;
+    public static CountryProvider Instance => instance ?? (instance = new CountryProvider());
+
+    private List<Country> Countries { get; set; }
+
+    private CountryProvider()
     {
-        // Lazy<T> guarantees thread-safe, single initialization
-        private static readonly Lazy<AppConfiguration> _instance =
-            new(() => new AppConfiguration());
+        // Retrieving data from db (simulating delay)
+        Task.Delay(2000).GetAwaiter().GetResult();
 
-        public static AppConfiguration Instance => _instance.Value;
-
-        // Settings
-        public string AppName { get; set; } = "Design Patterns App";
-        public string Version { get; set; } = "1.0.0";
-        public string Environment { get; set; } = "Production";
-
-        private AppConfiguration()
+        Countries = new List<Country>()
         {
-            Console.WriteLine("  ⚙️ Configuration loaded (once!)");
-        }
-
-        public void Display()
-        {
-            Console.WriteLine($"    App: {AppName} v{Version}");
-            Console.WriteLine($"    Env: {Environment}");
-        }
+            new Country(){ Name = "Türkiye" },
+            new Country(){ Name = "Birleşik Krallık" }
+        };
     }
 
-    // Approach 2: DI-friendly — register as singleton in DI container
-    // This is the PREFERRED approach in modern apps
-    public interface ILogService
-    {
-        void Log(string message);
-        int LogCount { get; }
-    }
+    public int CountryCount => Countries.Count;
 
-    public class LogService : ILogService
-    {
-        private int _count = 0;
-
-        public int LogCount => _count;
-
-        public void Log(string message)
-        {
-            _count++;
-            Console.WriteLine($"    📝 [{_count}] {message}");
-        }
-    }
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("⚙️ Singleton Pattern Demo\n");
-
-            // Lazy singleton — same instance everywhere
-            Console.WriteLine("── AppConfiguration (Lazy Singleton) ──");
-            var config1 = AppConfiguration.Instance;
-            var config2 = AppConfiguration.Instance;
-            Console.WriteLine($"  Same instance? {ReferenceEquals(config1, config2)}"); // True
-            config1.Display();
-
-            // DI-friendly approach
-            Console.WriteLine("\n── LogService (DI Singleton) ──");
-            // In real app: builder.Services.AddSingleton<ILogService, LogService>();
-            ILogService logger = new LogService(); // registered once in DI
-            logger.Log("App started");
-            logger.Log("User logged in");
-            logger.Log("Order placed");
-            Console.WriteLine($"  Total logs: {logger.LogCount}");
-
-            Console.WriteLine("\n✨ Lazy<T> = thread-safe singleton.");
-            Console.WriteLine("✨ DI container = testable singleton (can mock ILogService).");
-        }
-    }
+    public async Task<List<Country>> GetCountries() => Countries;
 }
+
+public class Country
+{
+    public string Name { get; set; }
+}
+
+// === Usage ===
+// Console.WriteLine(DateTime.Now.ToLongTimeString());
+// var countries = await CountryProvider.Instance.GetCountries();
+// var countries1 = await CountryProvider.Instance.GetCountries(); // Same instance!
+// Console.WriteLine(CountryProvider.Instance.CountryCount);
+// Console.WriteLine(DateTime.Now.ToLongTimeString());
+//
+// İlk çağrıda oluşur (2 sn bekler), ikinci çağrıda aynı instance gelir → 0 sn.
