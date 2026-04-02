@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test your SOLID Principles & Design Patterns knowledge with this interactive quiz. Perfect for interview preparation.">
+    <title>SOLID & Design Patterns — Interactive Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --card: #1a1a2e;
+            --card-hover: #1f1f35;
+            --text: #e8e8f0;
+            --text2: #9898b0;
+            --border: rgba(255,255,255,0.06);
+            --green: #6bcb77;
+            --red: #ff6b6b;
+            --blue: #4d96ff;
+            --purple: #c084fc;
+            --yellow: #ffd93d;
+            --radius: 16px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        .quiz-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+        /* Header */
+        .quiz-header { text-align: center; padding: 4rem 0 3rem; }
+        .quiz-header h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; }
+        .quiz-header h1 span { background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .quiz-header p { color: var(--text2); font-size: 1.1rem; }
+
+        /* Progress */
+        .progress-bar { background: var(--bg2); border-radius: 100px; height: 8px; margin-bottom: 2rem; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--purple)); border-radius: 100px; transition: width 0.5s ease; }
+        .progress-text { text-align: center; color: var(--text2); font-size: 0.9rem; margin-bottom: 1rem; }
+
+        /* Question Card */
+        .question-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .question-number { color: var(--blue); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; }
+        .question-text { font-size: 1.2rem; font-weight: 600; line-height: 1.6; margin-bottom: 0.8rem; }
+        .question-code {
+            background: #0d0d15;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin: 1rem 0 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            overflow-x: auto;
+            color: #c9d1d9;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Options */
+        .options { display: flex; flex-direction: column; gap: 0.8rem; }
+        .option {
+            padding: 1rem 1.2rem;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .option:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); transform: translateX(4px); }
+        .option .letter {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
+            background: rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
+        .option.correct { border-color: var(--green); background: rgba(107, 203, 119, 0.1); }
+        .option.correct .letter { background: var(--green); color: #000; }
+        .option.wrong { border-color: var(--red); background: rgba(255, 107, 107, 0.1); }
+        .option.wrong .letter { background: var(--red); color: #fff; }
+        .option.disabled { pointer-events: none; opacity: 0.6; }
+
+        /* Explanation */
+        .explanation {
+            margin-top: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            animation: fadeIn 0.3s ease;
+        }
+        .explanation.correct-exp { background: rgba(107, 203, 119, 0.08); border-left: 4px solid var(--green); color: var(--text2); }
+        .explanation.wrong-exp { background: rgba(255, 107, 107, 0.08); border-left: 4px solid var(--red); color: var(--text2); }
+        .explanation strong { color: var(--text); }
+
+        /* Next Button */
+        .next-btn {
+            display: none;
+            margin: 1.5rem auto 0;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(77,150,255,0.35); }
+        .next-btn.visible { display: block; }
+
+        /* Results */
+        .results { text-align: center; animation: fadeIn 0.5s ease; }
+        .results-score { font-size: 5rem; font-weight: 900; margin: 1rem 0; }
+        .results-score.great { color: var(--green); }
+        .results-score.good { color: var(--yellow); }
+        .results-score.poor { color: var(--red); }
+        .results-msg { font-size: 1.3rem; color: var(--text2); margin-bottom: 2rem; }
+        .results-detail { color: var(--text2); margin-bottom: 2rem; }
+        .restart-btn {
+            padding: 14px 40px;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: #fff; font-weight: 600; border: none; border-radius: 100px;
+            cursor: pointer; font-size: 1rem; transition: all 0.3s ease;
+            text-decoration: none; display: inline-block;
+        }
+        .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(77,150,255,0.35); }
+        .back-link { display: block; margin-top: 1rem; color: var(--text2); text-decoration: none; }
+        .back-link:hover { color: var(--text); }
+
+        /* Footer */
+        .quiz-footer { text-align: center; padding: 3rem 0 2rem; color: var(--text2); font-size: 0.85rem; }
+        .quiz-footer a { color: var(--blue); text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .quiz-container { padding: 1rem; }
+            .question-card { padding: 1.5rem; }
+            .quiz-header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>🧠 <span>SOLID & Patterns</span> Quiz</h1>
+        <p>15 questions to test your knowledge. Ready for that interview?</p>
+    </div>
+
+    <div class="progress-text" id="progressText">Question 1 of 15</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 6.66%"></div></div>
+
+    <div id="quizArea"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+
+    <div class="quiz-footer">
+        <a href="./index.html">← Back to SOLID Guide</a> · <a href="https://github.com/Vareasus/Design-Patterns">GitHub Repo</a>
+    </div>
+</div>
+
+<script>
+const questions = [
+    {
+        q: "Which SOLID principle is violated when a class handles both business logic AND database persistence?",
+        options: ["Open/Closed Principle", "Single Responsibility Principle", "Liskov Substitution Principle", "Dependency Inversion Principle"],
+        answer: 1,
+        explanation: "<strong>SRP</strong> states a class should have only one reason to change. Business logic and database persistence are two separate concerns that belong in different classes."
+    },
+    {
+        q: "What does the Open/Closed Principle state?",
+        options: ["Classes should be open for modification", "Classes should be open for extension but closed for modification", "Interfaces should be closed for extension", "Methods should be open for overriding only"],
+        answer: 1,
+        explanation: "<strong>OCP</strong> means you should be able to add new behavior by creating new classes (extension), without editing existing, working code (modification). Interfaces and polymorphism make this possible."
+    },
+    {
+        q: "A Square class extends Rectangle, but setting width also changes height. Which principle is violated?",
+        options: ["Interface Segregation", "Dependency Inversion", "Liskov Substitution", "Single Responsibility"],
+        answer: 2,
+        explanation: "<strong>LSP</strong> is violated because Square can't be used as a drop-in replacement for Rectangle — setting width independently is part of Rectangle's contract, and Square breaks it."
+    },
+    {
+        q: "Which code smell indicates an ISP violation?",
+        code: "public class Robot : IWorker\n{\n    public void Work() { /* OK */ }\n    public void Eat() => throw new NotImplementedException();\n    public void Sleep() => throw new NotImplementedException();\n}",
+        options: ["Using inheritance", "Throwing NotImplementedException in interface methods", "Having too many classes", "Using abstract classes"],
+        answer: 1,
+        explanation: "<strong>ISP</strong> says no client should depend on methods it doesn't use. Robot being forced to implement Eat() and Sleep() means the IWorker interface is too fat. Split it into IWorkable, IFeedable, ISleepable."
+    },
+    {
+        q: "Which principle does Dependency Injection help achieve?",
+        options: ["Single Responsibility", "Open/Closed", "Liskov Substitution", "Dependency Inversion"],
+        answer: 3,
+        explanation: "<strong>DIP</strong> says depend on abstractions, not concretions. Dependency Injection is a technique that achieves DIP by passing interfaces through constructors instead of using `new ConcreteClass()` directly."
+    },
+    {
+        q: "What's wrong with this code?",
+        code: "public class UserService\n{\n    private readonly MySqlDatabase _db = new MySqlDatabase();\n    public void Save(User user) => _db.Insert(user);\n}",
+        options: ["It uses a private field", "It's tightly coupled to MySQL — violates DIP", "The method is too short", "It should use static methods"],
+        answer: 1,
+        explanation: "UserService directly creates MySqlDatabase with <code>new</code>. It should depend on an <strong>IDatabase interface</strong> injected through the constructor. This violates DIP and makes testing impossible without a real database."
+    },
+    {
+        q: "Which design pattern lets you swap algorithms at runtime?",
+        options: ["Observer", "Singleton", "Strategy", "Factory"],
+        answer: 2,
+        explanation: "The <strong>Strategy Pattern</strong> encapsulates algorithms behind an interface, letting you swap them at runtime. Example: different sorting algorithms, different payment processors."
+    },
+    {
+        q: "The Observer Pattern creates what kind of relationship?",
+        options: ["One-to-one", "Many-to-many", "One-to-many", "None of the above"],
+        answer: 2,
+        explanation: "The <strong>Observer Pattern</strong> defines a one-to-many relationship: when one object (subject) changes state, all its dependents (observers) are notified automatically. Like subscribing to a newsletter."
+    },
+    {
+        q: "What problem does the Factory Pattern solve?",
+        options: ["Making objects immutable", "Decoupling object creation from usage", "Ensuring only one instance exists", "Adding behavior to existing objects"],
+        answer: 1,
+        explanation: "The <strong>Factory Pattern</strong> delegates object creation to a factory method, so the client code doesn't need to know which concrete class to instantiate. This follows OCP and DIP."
+    },
+    {
+        q: "What is the main risk of the Singleton Pattern?",
+        options: ["It uses too much memory", "It creates hidden dependencies and makes testing hard", "It's too slow", "It requires too many classes"],
+        answer: 1,
+        explanation: "<strong>Singleton</strong> can become a global state container, creating hidden dependencies that make unit testing difficult. The preferred modern approach is to register the class as a singleton in a DI container."
+    },
+    {
+        q: "The Decorator Pattern is an alternative to what?",
+        options: ["Interfaces", "Composition", "Subclassing / Inheritance", "Encapsulation"],
+        answer: 2,
+        explanation: "The <strong>Decorator Pattern</strong> avoids class explosion from inheritance. Instead of creating CoffeeWithMilk, CoffeeWithMilkAndSugar, etc., you wrap (decorate) a base object with combinable layers."
+    },
+    {
+        q: "Which principle says: 'Depend on abstractions, not concretions'?",
+        options: ["SRP", "OCP", "LSP", "DIP"],
+        answer: 3,
+        explanation: "<strong>Dependency Inversion Principle (DIP)</strong>. High-level modules should depend on interfaces (abstractions), not on concrete implementation classes. This decouples your architecture."
+    },
+    {
+        q: "A growing switch statement that checks types is a sign of violating which principle?",
+        code: "switch (shape)\n{\n    case Circle c: return Math.PI * c.R * c.R;\n    case Rectangle r: return r.W * r.H;\n    case Triangle t: return 0.5 * t.B * t.H;\n    // keeps growing...\n}",
+        options: ["SRP", "OCP", "ISP", "DIP"],
+        answer: 1,
+        explanation: "This violates <strong>OCP</strong>. Every new shape requires modifying this method. The fix: use an IShape interface with CalculateArea() — each shape implements it. The calculator never changes."
+    },
+    {
+        q: "What is the relationship between SOLID and Design Patterns?",
+        options: ["They're the same thing", "SOLID replaces Design Patterns", "Design Patterns are implementations of SOLID principles", "They're unrelated"],
+        answer: 2,
+        explanation: "Design Patterns are <strong>concrete implementations</strong> of SOLID principles. Strategy = OCP + DIP. Observer = SRP + OCP. Factory = DIP. Understanding SOLID helps you understand WHY patterns exist."
+    },
+    {
+        q: "If adding a new feature requires editing 10 existing files, which principle is MOST likely violated?",
+        options: ["SRP", "OCP", "LSP", "ISP"],
+        answer: 1,
+        explanation: "<strong>OCP</strong> — the system should be open for extension (add new classes) without modification (changing existing files). If 10 files need editing, the code isn't extensible through abstractions."
+    }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function renderQuestion() {
+    const q = questions[current];
+    const area = document.getElementById('quizArea');
+    let html = `<div class="question-card">
+        <div class="question-number">Question ${current + 1} of ${questions.length}</div>
+        <div class="question-text">${q.q}</div>`;
+    if (q.code) html += `<div class="question-code"><pre>${q.code}</pre></div>`;
+    html += `<div class="options">`;
+    const letters = ['A', 'B', 'C', 'D'];
+    q.options.forEach((opt, i) => {
+        html += `<div class="option" id="opt${i}" onclick="selectAnswer(${i})">
+            <span class="letter">${letters[i]}</span>
+            <span>${opt}</span>
+        </div>`;
+    });
+    html += `</div><div id="explanation"></div></div>`;
+    area.innerHTML = html;
+
+    document.getElementById('progressText').textContent = `Question ${current + 1} of ${questions.length}`;
+    document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
+    document.getElementById('nextBtn').classList.remove('visible');
+    answered = false;
+}
+
+function selectAnswer(idx) {
+    if (answered) return;
+    answered = true;
+    const q = questions[current];
+    const isCorrect = idx === q.answer;
+    if (isCorrect) score++;
+
+    // Highlight
+    document.getElementById(`opt${idx}`).classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect) document.getElementById(`opt${q.answer}`).classList.add('correct');
+
+    // Disable all
+    q.options.forEach((_, i) => { if (i !== idx && i !== q.answer) document.getElementById(`opt${i}`).classList.add('disabled'); });
+
+    // Explanation
+    const expDiv = document.getElementById('explanation');
+    expDiv.innerHTML = `<div class="explanation ${isCorrect ? 'correct-exp' : 'wrong-exp'}">
+        ${isCorrect ? '✅ Correct!' : '❌ Incorrect.'} ${q.explanation}
+    </div>`;
+
+    // Show next
+    const btn = document.getElementById('nextBtn');
+    btn.textContent = current === questions.length - 1 ? 'See Results 🎉' : 'Next Question →';
+    btn.classList.add('visible');
+}
+
+function nextQuestion() {
+    current++;
+    if (current >= questions.length) { showResults(); return; }
+    renderQuestion();
+}
+
+function showResults() {
+    const pct = Math.round((score / questions.length) * 100);
+    const grade = pct >= 80 ? 'great' : pct >= 50 ? 'good' : 'poor';
+    const msg = pct >= 80 ? "🎉 You're interview-ready!" : pct >= 50 ? "📚 Good foundation, review the weak areas." : "💪 Keep studying — you'll get there!";
+
+    document.getElementById('progressText').textContent = 'Quiz Complete!';
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('nextBtn').classList.remove('visible');
+
+    document.getElementById('quizArea').innerHTML = `
+        <div class="question-card results">
+            <div class="question-number">FINAL SCORE</div>
+            <div class="results-score ${grade}">${pct}%</div>
+            <div class="results-detail">${score} out of ${questions.length} correct</div>
+            <div class="results-msg">${msg}</div>
+            <button class="restart-btn" onclick="restart()">🔄 Try Again</button>
+            <a href="./index.html" class="back-link">← Back to SOLID Guide</a>
+        </div>`;
+}
+
+function restart() { current = 0; score = 0; renderQuestion(); }
+
+// Start
+renderQuestion();
+</script>
+</body>
+</html>
