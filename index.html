@@ -1744,6 +1744,60 @@
             <div class="trick-desc">Decorator = coffee toppings. Same cup, stack anything on top: milk, sugar, whip, caramel.</div>
         </div>
     </div>
+
+    <div class="pattern-diagram" style="border-color: rgba(255,154,60,0.3); background: rgba(255,154,60,0.04);">
+        <h4>🔑 virtual Keyword — Decorator'ın Kalbi</h4>
+
+        <span class="cm">// Base decorator: virtual ile override edilebilir method tanımlar</span>
+        <span class="kw">public abstract class</span> <span class="cls">BeverageDecorator</span> : <span class="iface">IBeverage</span>
+        {
+            <span class="kw">protected</span> <span class="iface">IBeverage</span> _inner;
+
+            <span class="kw">public</span> <span class="kw">virtual</span> <span class="cls">string</span> Description
+                => _inner.Description;           <span class="cm">// varsayılan: içeridekini döndür</span>
+
+            <span class="kw">public</span> <span class="kw">virtual</span> <span class="cls">decimal</span> Cost
+                => _inner.Cost;                   <span class="cm">// varsayılan: içeridekini döndür</span>
+        }
+
+        <span class="cm">// Concrete decorator: override ile davranış EKLER</span>
+        <span class="kw">public class</span> <span class="cls">MilkDecorator</span> : <span class="cls">BeverageDecorator</span>
+        {
+            <span class="kw">public override</span> <span class="cls">string</span> Description
+                => _inner.Description + <span class="str">", Milk"</span>;  <span class="cm">// ÜSTÜNE ekler</span>
+
+            <span class="kw">public override</span> <span class="cls">decimal</span> Cost
+                => _inner.Cost + <span class="num">0.50m</span>;             <span class="cm">// ÜSTÜNE ekler</span>
+        }
+
+        <span class="arrow">────────────────────────────────────────────</span>
+        <span class="kw">virtual</span>  = "Bu method'u alt class'lar değiştirebilir"
+        <span class="kw">override</span> = "Ben bu method'u değiştiriyorum"
+        <span class="kw">base.</span>    = "Ama önceki davranışı da çağırıyorum"
+
+        <strong>virtual olmadan override edemezsin → decorator çalışmaz.</strong>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin:1.5rem auto; max-width:1100px;">
+        <div class="red-flags" style="background:rgba(107,203,119,0.06); border-color:rgba(107,203,119,0.15);">
+            <h4 style="color:#6bcb77;">✅ Pros</h4>
+            <ul>
+                <li style="padding:0.4rem 0;"><strong>No class explosion</strong> — 5 decorator = 32 combo vs 32 subclass</li>
+                <li style="padding:0.4rem 0;"><strong>Runtime composition</strong> — add/remove behavior dynamically</li>
+                <li style="padding:0.4rem 0;"><strong>OCP + SRP</strong> — each decorator = one concern, original untouched</li>
+                <li style="padding:0.4rem 0;"><strong>Stackable</strong> — nest in any order: Log(Cache(Auth(Service)))</li>
+            </ul>
+        </div>
+        <div class="red-flags">
+            <h4>❌ Cons</h4>
+            <ul>
+                <li style="padding:0.4rem 0;"><strong>Debugging complexity</strong> — 10 nested wrappers = hard to trace</li>
+                <li style="padding:0.4rem 0;"><strong>Order matters</strong> — Cache(Log(x)) ≠ Log(Cache(x)) — different behavior</li>
+                <li style="padding:0.4rem 0;"><strong>Identity problem</strong> — decorated object ≠ original object (reference check fails)</li>
+                <li style="padding:0.4rem 0;"><strong>Overkill for simple cases</strong> — if only 2 variants, inheritance is simpler</li>
+            </ul>
+        </div>
+    </div>
 </section>
 
 <div class="divider"></div>
