@@ -1040,9 +1040,17 @@
     </div>
 
     <div class="key-points">
-        <div class="key-point"><span class="emoji">🔄</span><h4>Runtime Swapping</h4><p>Change algorithms on the fly without modifying client code.</p></div>
-        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + DIP</h4><p>New strategies = new classes. Context depends on interface.</p></div>
-        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Multiple algorithms for the same task: sorting, pricing, validation, compression.</p></div>
+        <div class="key-point"><span class="emoji">🔄</span><h4>Runtime Swapping</h4><p>Change algorithms on the fly. Call <code>SetStrategy()</code> to switch behavior without recompilation.</p></div>
+        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + DIP</h4><p>New strategies = new classes. Context depends on interface, never on concrete implementations.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Multiple algorithms for the same task: sorting, pricing, validation, compression, export formats.</p></div>
+        <div class="key-point"><span class="emoji">❌</span><h4>Don't Use When</h4><p>The algorithm never changes, or you only have 2 options that are unlikely to grow.</p></div>
+        <div class="key-point"><span class="emoji">🏗️</span><h4>3 Components</h4><p><strong>Strategy</strong> (interface), <strong>ConcreteStrategy</strong> (implementation), <strong>Context</strong> (uses the strategy).</p></div>
+        <div class="key-point"><span class="emoji">🧪</span><h4>Testing</h4><p>Each strategy is independently testable. Inject mock strategies to test the context in isolation.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"Strategy Pattern encapsulates a family of algorithms behind a common interface, letting me swap them at runtime. For example, in a payment system, I define an <code>IPaymentStrategy</code> interface, then implement <code>CreditCardPayment</code>, <code>PayPalPayment</code>, and <code>CryptoPayment</code>. The checkout service receives a strategy through its constructor and calls <code>Pay()</code> without caring which one it is. Adding Apple Pay? Create a new class. Zero changes to existing code. This satisfies both OCP and DIP."</p>
     </div>
 </section>
 
@@ -1098,9 +1106,17 @@
     </div>
 
     <div class="key-points">
-        <div class="key-point"><span class="emoji">📢</span><h4>One-to-Many</h4><p>One subject, many observers. State changes propagate automatically.</p></div>
-        <div class="key-point"><span class="emoji">🔓</span><h4>Loose Coupling</h4><p>Subject doesn't know concrete observers. Only the interface.</p></div>
-        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Event systems, notifications, real-time feeds, pub/sub messaging.</p></div>
+        <div class="key-point"><span class="emoji">📢</span><h4>One-to-Many</h4><p>One subject, many observers. When the subject changes state, ALL registered observers are notified automatically.</p></div>
+        <div class="key-point"><span class="emoji">🔓</span><h4>Loose Coupling</h4><p>Subject only knows the observer interface. Adding new observers requires zero changes to the subject.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Event systems, notifications, real-time feeds, pub/sub messaging, UI updates on data change.</p></div>
+        <div class="key-point"><span class="emoji">⚠️</span><h4>Watch Out</h4><p>Memory leaks from forgotten subscriptions. Always provide an <code>Unsubscribe()</code> method and clean up.</p></div>
+        <div class="key-point"><span class="emoji">🔗</span><h4>C# Events</h4><p>C# has built-in Observer support via <code>event</code> and <code>EventHandler</code> — the pattern is baked into the language.</p></div>
+        <div class="key-point"><span class="emoji">🏗️</span><h4>3 Components</h4><p><strong>Subject</strong> (publisher), <strong>Observer</strong> (interface), <strong>ConcreteObserver</strong> (email, SMS, Slack handler).</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"Observer Pattern creates a pub/sub relationship between objects. I use it when one state change should trigger multiple reactions. For example, when an order is placed, I need to send a confirmation email, update inventory, notify shipping, and log analytics. Instead of the OrderService calling all four, I publish an <code>OrderPlaced</code> event. Each handler subscribes independently. Adding a loyalty points handler? Just create a new observer and subscribe it — the OrderService never changes. In C#, this maps directly to <code>event</code> and <code>EventHandler&lt;T&gt;</code>."</p>
     </div>
 </section>
 
@@ -1157,9 +1173,17 @@
     </div>
 
     <div class="key-points">
-        <div class="key-point"><span class="emoji">🔨</span><h4>Delegate Creation</h4><p>Client asks for an object. Factory decides which concrete class.</p></div>
-        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + DIP</h4><p>New types = register them. Client code stays unchanged.</p></div>
-        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Complex object creation, multiple product families, plugin systems.</p></div>
+        <div class="key-point"><span class="emoji">🔨</span><h4>Delegate Creation</h4><p>Client says "I need a document." Factory decides whether it's PDF, Word, or Excel based on input.</p></div>
+        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + DIP</h4><p>New product types = register them. Client only knows the interface <code>IDocument</code>, never the concrete class.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Complex object creation, multiple product families, plugin architectures, database driver selection.</p></div>
+        <div class="key-point"><span class="emoji">🔀</span><h4>Factory vs Abstract Factory</h4><p><strong>Factory Method</strong>: one method creates one product. <strong>Abstract Factory</strong>: creates families of related products.</p></div>
+        <div class="key-point"><span class="emoji">💉</span><h4>DI Connection</h4><p>DI containers are essentially sophisticated factories — they create and manage object lifetimes for you.</p></div>
+        <div class="key-point"><span class="emoji">🧪</span><h4>Testing</h4><p>Swap the factory in tests to return mock objects. Client code doesn't change at all.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"Factory Pattern abstracts object creation away from the client. Instead of scattering <code>new ConcreteClass()</code> throughout the codebase, I centralize creation in a factory. For example, a <code>NotificationFactory</code> creates the right notification sender (Email, SMS, Push) based on user preferences. The caller just says <code>factory.Create("email")</code> and gets an <code>INotification</code> back. This follows DIP because the caller depends on the abstraction, not the concrete type. It also follows OCP because adding WhatsApp means registering a new creator, not modifying existing code."</p>
     </div>
 </section>
 
@@ -1310,9 +1334,17 @@
     </div>
 
     <div class="key-points">
-        <div class="key-point"><span class="emoji">🧅</span><h4>Layer by Layer</h4><p>Each decorator adds ONE feature. Stack as many as you want.</p></div>
-        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + SRP</h4><p>Add behavior without modifying originals. Each decorator = one concern.</p></div>
-        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Configurable features, middleware pipelines, stream wrappers.</p></div>
+        <div class="key-point"><span class="emoji">🧅</span><h4>Layer by Layer</h4><p>Each decorator adds ONE feature. Stack as many as you want in any order — like nesting Russian dolls.</p></div>
+        <div class="key-point"><span class="emoji">🔌</span><h4>OCP + SRP</h4><p>Add behavior without modifying originals. Each decorator = one concern. Original class stays untouched.</p></div>
+        <div class="key-point"><span class="emoji">📦</span><h4>Use When</h4><p>Configurable features, middleware pipelines, stream wrappers, logging/caching/auth layers.</p></div>
+        <div class="key-point"><span class="emoji">🔀</span><h4>vs Inheritance</h4><p>Inheritance is static (compile-time). Decorator is dynamic (runtime). 5 decorators give you <strong>2⁵ = 32 combinations</strong> vs 32 subclasses.</p></div>
+        <div class="key-point"><span class="emoji">🌐</span><h4>Real-World</h4><p>ASP.NET Middleware pipeline is a perfect Decorator example — each middleware wraps the next: Auth → Logging → CORS → Routing.</p></div>
+        <div class="key-point"><span class="emoji">⚠️</span><h4>Watch Out</h4><p>Too many layers create debugging complexity. Keep the decorator stack reasonable and document the order.</p></div>
+    </div>
+
+    <div class="interview-box">
+        <h3>🗣️ Interview Answer</h3>
+        <p>"Decorator Pattern lets me add behavior to objects dynamically by wrapping them, without subclassing. Think of ASP.NET middleware — each middleware wraps the next, adding authentication, logging, or CORS handling. Another example: I have an <code>IDataService</code> that reads from a database. I can wrap it with a <code>CachingDecorator</code> that checks the cache first, then a <code>LoggingDecorator</code> that logs every call: <code>new LoggingDecorator(new CachingDecorator(new SqlDataService()))</code>. Each wrapper adds exactly one responsibility. I can compose them in any order with zero modification to the original classes."</p>
     </div>
 </section>
 
